@@ -1,0 +1,6 @@
+RED = '#d73027'
+ORANGE = '#fc8d59'
+YELLOW = '#fee090'
+BLUE = '#4575b4'
+
+COLORS = [RED, BLUE, ORANGE, YELLOW]
