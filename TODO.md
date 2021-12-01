@@ -20,15 +20,26 @@ all eda on the entire dataset (merge train and test before)
 
 ## Implementation of Models
 
+- [ ] transfer plotting function from `eduml` to this project (and use to plot decision boundaries)
+- [ ] define custom errors, sa. ModelNotFittedError
+- [ ] more checkers and validators to ensure data integrity and useful error messages
+
 ### Decision Tree
 - [ ] Add more stop criterions (rn: max_depth, total purity)
       -> missing: minium leaf nodes, minimum num of datapoints per leaf, max leaves
-- [ ] 
+- [ ] plot decision tree (or basic plain text summary)
 
 ### Neural Network
-- [ ] implement autograd
-- [ ] write generic layer object
-- [ ] write generic nn object
+- [ ] generate more test cases to check performance (correctness and speed of implementation)
+- [ ] maybe: generalise model to only take hidden layers (and infer input and output layer from fitted data)
+      -> here we need to make a design choice: either only add layers on call to .fit() or ask for n_features, n_classes
+         during initialisation
+- [ ] implement 'softmax' activation for dense layer
+- [ ] change dense layer, st. it only takes number of neurons (ie. infers number of input neurons automatically)
+- [ ] implement mapping to account for generic target vectors
+- [ ] check correctness of other loss-functions (mse and cross-entropy currently not working)
+
+- [ ] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
 
 ### Evaluate Correctness
 - [ ] DT:plot decision boundaries for generic 2d-feature classification task using classification 
@@ -49,7 +60,3 @@ def train_and_evaluate(model : mlmodel, params : dict, score: 'macro_recall'):
 - [ ] report final performance from returned best model on test set
 - [ ] build and export final model as trained from entire dataset using best test-performance with best
       selected features
-
-
-
-
