@@ -14,7 +14,8 @@ from sklearn.model_selection import train_test_split
 
 # iris data 
 X, y = load_iris(return_X_y=True)
-X = X[:, :2]
+X = X[y!=2, :2]
+y = y[y!=2]
 
 # scale features for gradient descent to work properly
 scaler = StandardScaler()
@@ -26,7 +27,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y)
 dl = DenseLayer(n_in=2, n_out=6, activation='tanh', name='fc1')
 dl2 = DenseLayer(n_in=6, n_out=5, activation='tanh', name='fc2')
 dl3 = DenseLayer(n_in=5, n_out=4, activation='tanh', name='fc3')
-nn = NeuralNetworkClassifier(layers = [dl, dl2], name='TestNeuralNetClassifier')
+
+nn = NeuralNetworkClassifier(layers = [dl, dl2], loss='squared_error', name='TestNeuralNetClassifier')
 
 """
 Alternative Initialisation:
@@ -39,7 +41,7 @@ Alternative Initialisation:
 #  train model
 epochs = 100
 lr = 0.01
-nn.fit(X_train, y_train, epochs=epochs, lr=lr)
+nn.fit(X_train, y_train, batch_size=1, epochs=epochs, lr=lr)
 
 # plot training history
 plt.plot(list(range(epochs)), nn.training_history)
@@ -53,5 +55,15 @@ train_preds = nn.predict(X_train)
 test_preds = nn.predict(X_test)
 
 # evaluate performance
-print(f'Training Accuracy: {accuracy_score(y_train, nn.predict(X_train))}')
-print(f'Test Accuracy: {accuracy_score(y_test, nn.predict(X_test))}')
+print(f'Training Accuracy: {accuracy_score(y_train, train_preds)}')
+print(f'Test Accuracy: {accuracy_score(y_test, test_preds)}')
+
+"""
+BENCHMARK: LogisticRegression 
+from sklearn.linear_model import LogisticRegression
+
+clf = LogisticRegression()
+clf.fit(X_train, y_train)
+pred = clf.predict(X_train)
+print(accuracy_score(y_train, pred))
+"""
