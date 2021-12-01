@@ -6,9 +6,9 @@ all eda on the entire dataset (merge train and test before)
 - [ ] Numerical Summaries for all features, average, five-num-summary, variance)
 - [ ] Make description of all features (quantitative vs. qualitative, small description of
       all features to have an intution on their effect in classiying the glass)
-- [ ] Boxplots for all features 
-- [ ] Pairplot (scatters for all pairs of features)
-- [ ] Violinplot that show class distribution for all features (p violinplots, (1, k) subplots)
+- [x] Boxplots for all features 
+- [x] Pairplot (scatters for all pairs of features)
+- [x] Violinplot that show class distribution for all features (p violinplots, (1, k) subplots)
 
 - [ ] Maybe make generate_markdown() function to summarise EDA for generic dataset 
 
