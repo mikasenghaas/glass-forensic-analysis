@@ -10,3 +10,5 @@ def convert_to_var(arr):
 
     return np.array(arr).reshape(shape)
 
+def softmax(y_hot):
+    return (y_hot.T / np.sum(y_hot, axis=1)).T

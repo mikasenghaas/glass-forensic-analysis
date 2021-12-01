@@ -1,4 +1,4 @@
-from math import tanh
+from math import tanh, log10
 
 class Var:
     """
@@ -49,5 +49,20 @@ class Var:
     def relu(self):
         return Var(self.v if self.v > 0.0 else 0.0, [(self, 1.0 if self.v > 0.0 else 0.0)])
 
+    def log(self):
+        return Var(log10(self.v), self.grad)
+
     def __repr__(self):
-        return f"Var(v={self.v}, grad={self.grad})"
+        return f'{self.v}'
+        #return f"Var(v={self.v}, grad={self.grad})"
+
+
+if __name__ == '__main__':
+    import numpy as np
+
+    activation = np.vectorize(lambda x:x.relu())
+
+    x = np.array([[Var(5), Var(3)], [Var(2), Var(2)]])
+    y = np.array([Var(2), Var(2)])
+
+    print(activation(x @ y + Var(1)))
