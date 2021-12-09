@@ -6,13 +6,11 @@ from ...utils import *
 
 class DecisionTree:
     """
-    Parent Class,not intended for use. Use children classes 
-    - DecisionTreeClassifier 
-    - DecisionTreeRegressor
+    Parent Class,not intended for use. Use children classes DecisionTreeClassifier()
     """
     def __init__(self, max_depth=None, algorithm='greedy', max_features='auto', random_state=None):
         # generic data
-        self.X = self.y = self.n = self.p = None
+        self.X = self.y = self.n = self.p = self.k = None
         self.fitted = False
 
         # decision tree metrics
@@ -38,6 +36,7 @@ class DecisionTree:
         check_consistent_length(X, y)
 
         self.n, self.p = self.X.shape
+        self.k = len(np.unique(self.y))
 
         if isinstance(self.max_features, int):
             self.max_features = self.max_features
@@ -55,11 +54,11 @@ class DecisionTree:
         self._split(self.root)
         self.fitted = True
 
-    def predict(self, X):
+    def predict_proba(self, X):
         X = validate_feature_matrix(X)
         n = X.shape[0]
 
-        preds = np.empty(n) 
+        probs = [] 
         for i in range(n):
             curr = self.root
             while not curr.is_leaf():
@@ -68,13 +67,12 @@ class DecisionTree:
                 else: 
                     curr = curr.left
 
-            preds[i] = curr.prediction
+            probs.append(curr.predict_proba)
 
-        return preds
+        return np.array(probs)
 
-    def predict_proba(self, X):
-        # undefined for single decision tree
-        return np.empty(0)
+    def predict(self, X):
+        return np.argmax(self.predict_proba(X), axis=1)
 
     def __len__(self):
         return self.num_nodes
@@ -170,7 +168,6 @@ class DecisionTree:
             return weighted_impurity, (p, val)
 
 
-
     def _split(self, curr):
         # curr is initialised as node with size, indices of values and depth
         # find best split
@@ -212,7 +209,7 @@ class DecisionTree:
         else:
             # otherwise make leaf
             curr.left.type = 'leaf'
-            curr.left.prediction = self._evaluate_leaf(curr.left)
+            curr.left.predict, curr.left.predict_proba = self._evaluate_leaf(curr.left)
             self.num_leaf_nodes += 1
 
         curr.right = Node(size=curr.split[1], values=next_values[1], depth=curr.depth+1)
@@ -222,5 +219,5 @@ class DecisionTree:
             self._split(curr.right)
         else:
             curr.right.type = 'leaf'
-            curr.right.prediction = self._evaluate_leaf(curr.right)
+            curr.right.predict, curr.right.predict_proba = self._evaluate_leaf(curr.right)
             self.num_leaf_nodes += 1

@@ -22,6 +22,10 @@ class DecisionTreeClassifier(DecisionTree):
     def _evaluate_leaf(self, node):
         labels = self.y[node.values]
         counter = Counter(labels)
-        most_frequent_class = counter.most_common()[0][0]
+        predict = counter.most_common()[0][0] # most_frequent class
 
-        return most_frequent_class
+        predict_proba = [0 for _ in range(self.k)]
+        for pred, c in counter.items():
+            predict_proba[pred] = c / sum(counter.values())
+
+        return predict, predict_proba

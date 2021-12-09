@@ -15,7 +15,8 @@ class Node:
 
         # leaf node
         self.type = _type
-        self.prediction = None
+        self.predict = None
+        self.predict_proba = None
 
     def is_leaf(self):
         return self.type == 'leaf'
