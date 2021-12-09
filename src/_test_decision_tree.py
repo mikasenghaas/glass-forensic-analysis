@@ -8,8 +8,9 @@ from scripts.metrics import accuracy_score
 from scripts.plotting import plot_2d_decision_regions
 
 from sklearn.datasets import load_iris
-#from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+#from sklearn.tree import DecisionTreeClassifier
 
 
 def main():
@@ -23,6 +24,7 @@ def main():
     y = y[uniq_idx]
     #y = y[y!=2]
 
+
     """
     # scale features for gradient descent to work properly
     scaler = StandardScaler()
@@ -33,21 +35,24 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     # initialise and train model
-    clf = DecisionTreeClassifier(max_depth=None, max_features=2)
+    clf = DecisionTreeClassifier()
     clf.fit(X_train, y_train)
+
+    print(clf._model_name)
+    print(clf)
+    print(clf.score())
 
     # get predictions for training and test split
     train_preds = clf.predict(X_train)
-    print(train_preds)
     test_preds = clf.predict(X_test)
 
     # evaluate performance
     print(f'Training Accuracy: {accuracy_score(y_train, train_preds)}')
     print(f'Test Accuracy: {accuracy_score(y_test, test_preds)}')
 
-    fig = plot_2d_decision_regions(X_train, y_train, clf, meshsize=0.03)
+    fig = plot_2d_decision_regions(X_train, y_train, clf, 
+                                    show_probs=False, title='DecisionTreeClassifier on Iris')
     plt.show()
-
 
 if __name__ == '__main__':
     main()
