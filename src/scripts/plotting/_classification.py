@@ -1,5 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
+from matplotlib.offsetbox import AnchoredText
+
 
 from ..utils import COLORS
 
@@ -57,7 +59,10 @@ def plot_2d_decision_regions(x, y, model, meshsize=100, marker='s', colors=None,
         assert k == len(colors), 'enter correct number of colors'
         colormap = np.array(colors)
 
-    labels = np.array([f'Class: {str(c).title()}' for c in model.classes()])
+    if hasattr(model, 'classes'):
+        labels = np.array([f'Class: {str(c).title()}' for c in model.classes()])
+    else:
+        labels = np.array([i for i in range(k)])
 
     # prepare data
     x0 = x[:, 0]
@@ -92,6 +97,10 @@ def plot_2d_decision_regions(x, y, model, meshsize=100, marker='s', colors=None,
     ax.set_xlabel('$X_1$')
     ax.set_ylabel('$X_2$')
     ax.legend(loc='best')
+
+    # 
+    training_acc = AnchoredText(f'Training Accuracy: {round(model.score() * 100, 2)}%', loc=4)
+    ax.add_artist(training_acc)
 
     return ax
 
