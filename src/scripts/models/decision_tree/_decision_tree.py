@@ -8,19 +8,42 @@ class DecisionTree:
     """
     Parent Class,not intended for use. Use children classes DecisionTreeClassifier()
     """
-    def __init__(self, max_depth=None, algorithm='greedy', max_features='auto', random_state=None):
+    def __init__(
+            self, 
+            algorithm='greedy', 
+            max_depth=None, 
+            max_features='auto',
+            min_samples_split=2,
+            #max_nodes=None,
+            max_leaf_nodes=None,
+            random_state=None):
+
         # decision tree metrics
         self.root = None
         self.num_nodes = 0
         self.num_leaf_nodes = 0
 
         self.criterion = None
-        self.max_features = max_features # the number of features to search for in best split (if None: entire feature space)
         self.algorithm = algorithm
 
-        # stopping criterion
+        # the number of features to search for in best split (if None: entire feature space)
+        self.max_features = max_features 
+        # minimum number of samples on node for it to be able to split (must be int)
+        self.min_samples_split = min_samples_split
+
+        # max depth criterion
         if max_depth == None: self.max_depth = math.inf 
         else: self.max_depth = max_depth
+
+        """
+        # max leaf nodes criterion
+        if max_leaf_nodes == None: self.max_leaf_nodes = math.inf 
+        else: self.max_leaf_nodes = max_leaf_nodes
+
+        # max nodes criterion
+        if max_leaf_nodes == None: self.max_leaf_nodes = math.inf 
+        else: self.max_leaf_nodes = max_leaf_nodes
+        """
 
         # set random seed
         np.random.seed(random_state)
@@ -107,13 +130,15 @@ class DecisionTree:
 
     def _check_criterion(self, node):
         depth_not_reached = node.depth <= self.max_depth
-        # max_nodes_not_reached = self.num_nodes < self.max_nodes
+        min_samples_not_reached = len(node.values) >= self.min_samples_split
+        #max_nodes_not_reached = self.num_nodes < self.max_nodes
         #max_leaf_nodes_not_reached = self.num_leaf_nodes < self.max_leaf_nodes 
         can_split = len(np.unique(self.X[node.values], axis=0)) > 1
 
         return (depth_not_reached and 
                 # max_nodes_not_reached and 
-                #max_leaf_nodes_not_reached and 
+                # max_leaf_nodes_not_reached and 
+                min_samples_not_reached and
                 can_split)
 
     def _best_split(self, X, y):

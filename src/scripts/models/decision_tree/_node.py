@@ -37,4 +37,5 @@ class Node:
         elif self.type == 'leaf':
             return f'Leaf Node at Depth {self.depth} '\
                    f'(Loss: {round(self.loss, 2) if self.loss!=None else None}): '\
-                   f'Prediction: {self.prediction}'
+                   f'Samples in Leaf: {len(self.values)} ' \
+                   f'Prediction: {self.predict}'
