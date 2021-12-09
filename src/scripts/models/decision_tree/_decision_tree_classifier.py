@@ -2,13 +2,15 @@ import math
 from collections import Counter
 import numpy as np 
 
+from ...base import BaseClassifier
 from ._decision_tree import DecisionTree
 from ...metrics import binary_gini, gini, entropy
 
-class DecisionTreeClassifier(DecisionTree):
+class DecisionTreeClassifier(BaseClassifier, DecisionTree):
     def __init__(self, criterion='gini', max_depth=None, algorithm='greedy', max_features='auto'):
 
-        super().__init__(max_depth=max_depth, algorithm=algorithm, max_features=max_features)
+        BaseClassifier.__init__(self)
+        DecisionTree.__init__(self, max_depth=max_depth, algorithm=algorithm, max_features=max_features)
 
         if criterion == 'gini':
             self.criterion = gini

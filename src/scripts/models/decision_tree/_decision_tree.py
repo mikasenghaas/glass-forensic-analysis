@@ -9,10 +9,6 @@ class DecisionTree:
     Parent Class,not intended for use. Use children classes DecisionTreeClassifier()
     """
     def __init__(self, max_depth=None, algorithm='greedy', max_features='auto', random_state=None):
-        # generic data
-        self.X = self.y = self.n = self.p = self.k = None
-        self.fitted = False
-
         # decision tree metrics
         self.root = None
         self.num_nodes = 0
