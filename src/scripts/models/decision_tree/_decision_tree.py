@@ -32,7 +32,11 @@ class DecisionTree:
         check_consistent_length(X, y)
 
         self.n, self.p = self.X.shape
-        self.k = len(np.unique(self.y))
+        unique_classes = np.unique(self.y)
+        self.k = len(unique_classes)
+
+        self.label = {k: unique_classes[k] for k in range(self.k)}
+        self.intcode = {unique_classes[k]:k for k in range(self.k)}
 
         if isinstance(self.max_features, int):
             self.max_features = self.max_features
@@ -68,7 +72,7 @@ class DecisionTree:
         return np.array(probs)
 
     def predict(self, X):
-        return np.argmax(self.predict_proba(X), axis=1)
+        return np.vectorize(self.label.get)(np.argmax(self.predict_proba(X), axis=1))
 
     def __len__(self):
         return self.num_nodes

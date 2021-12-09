@@ -28,6 +28,6 @@ class DecisionTreeClassifier(BaseClassifier, DecisionTree):
 
         predict_proba = [0 for _ in range(self.k)]
         for pred, c in counter.items():
-            predict_proba[pred] = c / sum(counter.values())
+            predict_proba[self.intcode[pred]] = c / sum(counter.values())
 
         return predict, predict_proba
