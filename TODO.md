@@ -24,10 +24,23 @@ all eda on the entire dataset (merge train and test before)
 - [ ] define custom errors, sa. ModelNotFittedError
 - [ ] more checkers and validators to ensure data integrity and useful error messages
 
+### Make Base Model Classifier
+- [ ] have string -> int mapping defined
+- [ ] commonly used attributes
+- [ ] is_fitted method
+
 ### Decision Tree
-- [ ] Add more stop criterions (rn: max_depth, total purity)
-      -> missing: minium leaf nodes, minimum num of datapoints per leaf, max leaves
+- [ ] Add more stop criterions 
+      - [x] max depth
+      - [ ] maximum leaf nodes
+      - [ ] maximum nodes 
+      - [x] min samples per leaf 
 - [ ] plot decision tree (or basic plain text summary)
+- [x] implement predict_proba() function
+- [ ] make testings of all features (including visualising) 
+    - [ ] different max_depths
+    - [ ] random feature selection 
+- [ ] test different criterion functions
 
 ### Neural Network
 - [ ] generate more test cases to check performance (correctness and speed of implementation)
@@ -40,6 +53,10 @@ all eda on the entire dataset (merge train and test before)
 - [ ] check correctness of other loss-functions (mse and cross-entropy currently not working)
 
 - [ ] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
+
+### Plotting
+- [x] make plot_2d_decision_function() check for predict_proba function of model and 
+      plot sizes according to predict proba
 
 ### Evaluate Correctness
 - [ ] DT:plot decision boundaries for generic 2d-feature classification task using classification 
