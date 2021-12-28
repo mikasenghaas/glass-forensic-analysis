@@ -3,9 +3,11 @@ from tqdm import tqdm
 from icecream import ic
 from sklearn.preprocessing import OneHotEncoder
 
+from timeit import default_timer
+
 from ...base import BaseClassifier
 from ...utils import validate_feature_matrix, validate_target_vector
-from ...metrics import se, mse, cross_entropy 
+from ...metrics import se, mse, cross_entropy, accuracy_score
 from ._autograd import Var
 from ._dense_layer import DenseLayer
 from ._helper import convert_to_var, softmax, hot_encode
@@ -67,11 +69,18 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.y_hot = convert_to_var(y_hot)
 
         # compute batch size
-        batch_size = int(X.shape[0] * batch_size)
+        if isinstance(batch_size, float) or batch_size == 1:
+            batch_size = int(X.shape[0] * batch_size)
+        elif isinstance(batch_size, int):
+            batch_size = batch_size
+        else:
+            assert False, 'wrong type for batch size'
 
         # training loop
-        self.training_history = []
-        for epoch in tqdm(range(epochs)):
+        self.loss_history = []
+        self.accuracy_history = []
+        for epoch in range(epochs):
+            start_epoch = default_timer()
             if batch_size < self.n :
                 batch_idxs = np.random.choice(list(range(self.n)), batch_size, replace=False) 
                 X_batch = self.X[batch_idxs]
@@ -81,44 +90,48 @@ class NeuralNetworkClassifier(BaseClassifier):
                 y_batch = self.y_hot
 
             # get the probabilities for each datapoint of belonging to each class
-            probs = self.forward(X_batch) # n x k matrix of probs for each data point for each class 
+            probs = self.forward(X_batch) # batch_size_n x k matrix of probs for each data point for each class 
 
             # compute loss on one-hot encoded target matrix
-
             assert not np.any(probs < Var(0.0)), 'probs must be > 0, due to softmax'
-            loss = self.loss(y_batch, probs)
+            loss = self.loss(y_batch, probs) / Var(len(y_batch))
 
             # append loss to training history
-            self.training_history.append(loss.v)
+            self.loss_history.append(loss.v)
 
             # zeroing out gradients
             for param in self.parameters:
                 param.grad = 0.0
 
-            # recompute gradients
-            loss.backward()
+            # backward prop 
+            loss.backward() # 0.33/0.66 = 50% of epoch time
 
             # update weights
             for param in self.parameters: 
                 param.v -= lr * param.grad
 
+            # compute training accuracy
+            training_accuracy = accuracy_score(self.y, self.predict(self.X)) # 20% of epoch time
+            self.accuracy_history.append(training_accuracy) 
+
             if verbose:
                 if epoch % verbose == 0:
-                    print(epoch, loss)
+                    end_epoch = default_timer() - start_epoch
+                    print(f'> Epoch: {epoch+1} - Batch: {batch_size} - Time: {round(end_epoch, 2)}s - '\
+                            f'Loss: {loss.v} - Training Accuracy: {round(training_accuracy, 2)}')
+
 
         self.fitted = True
 
     def predict(self, X):
         probs = self.predict_proba(X)
 
-        return np.argmax(probs, axis=1).astype(int)
+        return np.array([self.label[pred] for pred in np.argmax(probs, axis=1).astype(int)])
 
     def predict_proba(self, X):
         X = convert_to_var(X)
 
-        probs = self.forward(X) # probs for classes
-
-        return softmax(probs) # softmaxed results
+        return self.forward(X) # probs for classes
 
     def _parameters(self):
         """ Returns all the parameters of the layers as a 1d np array"""
