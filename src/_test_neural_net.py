@@ -26,11 +26,11 @@ X = scaler.fit_transform(X)
 # train test split to evaluate out-of-bag-performance
 X_train, X_test, y_train, y_test = train_test_split(X, y)
 
-dl = DenseLayer(n_in=2, n_out=10, activation='tanh', name='fc1')
-dl2 = DenseLayer(n_in=10, n_out=5, activation='tanh', name='fc2')
-dl3 = DenseLayer(n_in=5, n_out=4, activation='tanh', name='fc3')
+dl = DenseLayer(n_in=2, n_out=5, activation='tanh', name='fc1')
+#dl2 = DenseLayer(n_in=10, n_out=5, activation='tanh', name='fc2')
+#dl3 = DenseLayer(n_in=5, n_out=4, activation='tanh', name='fc3')
 
-nn = NeuralNetworkClassifier(layers = [dl, dl2], loss='squared_error', name='TestNeuralNetClassifier')
+nn = NeuralNetworkClassifier(layers = [dl], loss='cross_entropy', name='TestNeuralNetClassifier')
 
 """
 Alternative Initialisation:
@@ -41,8 +41,8 @@ Alternative Initialisation:
 
 
 #  train model
-epochs = 100
-lr = 0.01
+epochs = 50
+lr = 0.005
 nn.fit(X_train, y_train, batch_size=1, epochs=epochs, lr=lr)
 
 # plot training history
@@ -60,7 +60,7 @@ test_preds = nn.predict(X_test)
 print(f'Training Accuracy: {accuracy_score(y_train, train_preds)}')
 print(f'Test Accuracy: {accuracy_score(y_test, test_preds)}')
 
-fig = plot_2d_decision_regions(X_train, y_train, nn, meshsize=0.05)
+fig = plot_2d_decision_regions(X_train, y_train, nn)
 plt.show()
 
 """

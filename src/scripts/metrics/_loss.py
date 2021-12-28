@@ -19,9 +19,11 @@ def binary_cross_entropy(y, p):
 
 def cross_entropy(y, p):
     #return - (1 / y.shape[0]) * np.sum(y * np.log(p))
+    """
     if y.ndim == 1:
         y = y.reshape(-1, 1)
     if p.ndim == 1:
         p = p.reshape(-1, 1)
+    """
 
     return -np.sum(np.log(p) * y)

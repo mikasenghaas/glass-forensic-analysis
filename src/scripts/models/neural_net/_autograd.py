@@ -1,4 +1,5 @@
-from math import tanh, log10
+from math import tanh, log, log10, exp
+import numpy as np 
 
 class Var:
     """
@@ -50,19 +51,42 @@ class Var:
         return Var(self.v if self.v > 0.0 else 0.0, [(self, 1.0 if self.v > 0.0 else 0.0)])
 
     def log(self):
-        return Var(log10(self.v), self.grad)
+        return Var(log10(self.v), [(self, 1 / self.v * log(10))]) 
+
+    def exp(self):
+        return Var(exp(self.v), [(self, exp(self.v))])
+
+    def __float__(self):
+        return self.v
+
+    def __int__(self):
+        return int(self.v)
 
     def __repr__(self):
-        return f'{self.v}'
-        #return f"Var(v={self.v}, grad={self.grad})"
+        #return f'{self.v}'
+        return f"Var(v={self.v}, grad={self.grad})"
 
 
 if __name__ == '__main__':
     import numpy as np
 
+    p = np.array([[Var(.8), Var(.2)], [Var(.2), Var(.8)]])
+    y = np.array([[Var(1), Var(0)], [Var(0), Var(1)]])
+
+    print(-np.sum(np.log(p) * y))
+
+    def ce(p, y):
+        print(p)
+        print(np.log(p))
+        return -np.sum(np.log(p) * y)
+
+    print(ce(p, y))
+
+    """
     activation = np.vectorize(lambda x:x.relu())
 
     x = np.array([[Var(5), Var(3)], [Var(2), Var(2)]])
     y = np.array([Var(2), Var(2)])
 
     print(activation(x @ y + Var(1)))
+    """

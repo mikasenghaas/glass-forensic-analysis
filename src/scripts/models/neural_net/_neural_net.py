@@ -3,14 +3,17 @@ from tqdm import tqdm
 from icecream import ic
 from sklearn.preprocessing import OneHotEncoder
 
+from ...base import BaseClassifier
 from ...utils import validate_feature_matrix, validate_target_vector
 from ...metrics import se, mse, cross_entropy 
 from ._autograd import Var
 from ._dense_layer import DenseLayer
-from ._helper import convert_to_var, softmax
+from ._helper import convert_to_var, softmax, hot_encode
 
-class NeuralNetworkClassifier:
-    def __init__(self, layers=[], loss='squared_loss', name='NeuralNetworkClassifier'):
+class NeuralNetworkClassifier(BaseClassifier):
+    def __init__(self, layers=[], loss='squared_error', name='NeuralNetworkClassifier'):
+        super().__init__()
+
         self.name = name
 
         self.X = self.y = self.n = self.p = None
@@ -22,12 +25,12 @@ class NeuralNetworkClassifier:
 
         if loss == 'cross_entropy':
             self.loss = cross_entropy
-        elif loss == 'squared_loss':
+        elif loss == 'squared_error':
             self.loss = se
         elif loss == 'mean_squared_error':
             self.loss = mse
         else:
-            raise NotImplementedError(f"{loss} not yet implemented. Choose from ['cross_entropy', 'squared_loss', 'mean_squared_error']") 
+            raise NotImplementedError(f"{loss} not yet implemented. Choose from ['cross_entropy', 'squared_error', 'mean_squared_error']") 
 
     def add(self, layer):
         self.layers.append(layer)
@@ -44,19 +47,26 @@ class NeuralNetworkClassifier:
     def fit(self, X, y, batch_size=1, epochs=1000, lr = 0.01, verbose=0):
         self.X = validate_feature_matrix(X)
         self.X = convert_to_var(self.X)
+        self.y = y 
 
         self.n, self.p = self.X.shape
         self.k = len(np.unique(y))
         
         # add output layer
-        output_layer = DenseLayer(self.layers[-1].neurons(), self.k, activation='tanh', name='OutputLayer')
+        output_layer = DenseLayer(self.layers[-1].neurons(), self.k, activation='softmax', name='Output')
         self.add(output_layer)
 
-        #self.y = validate_target_vector(y)
-        encoder = OneHotEncoder(sparse=False)
-        y = encoder.fit_transform(y.reshape(-1, 1))
-        self.y = convert_to_var(y)
+        # populate label-intcode dictionaries
+        unique_classes = np.unique(y)
 
+        self.label = {k: unique_classes[k] for k in range(self.k)}
+        self.intcode = {unique_classes[k]:k for k in range(self.k)}
+
+        # one hot encode y (into nxk matrix of Vars)
+        y_hot = hot_encode(self.y, self.intcode)
+        self.y_hot = convert_to_var(y_hot)
+
+        # compute batch size
         batch_size = int(X.shape[0] * batch_size)
 
         # training loop
@@ -65,15 +75,17 @@ class NeuralNetworkClassifier:
             if batch_size < self.n :
                 batch_idxs = np.random.choice(list(range(self.n)), batch_size, replace=False) 
                 X_batch = self.X[batch_idxs]
-                y_batch = self.y[batch_idxs]
+                y_batch = self.y_hot[batch_idxs]
             else: 
                 X_batch = self.X
-                y_batch = self.y
+                y_batch = self.y_hot
 
             # get the probabilities for each datapoint of belonging to each class
             probs = self.forward(X_batch) # n x k matrix of probs for each data point for each class 
 
             # compute loss on one-hot encoded target matrix
+
+            assert not np.any(probs < Var(0.0)), 'probs must be > 0, due to softmax'
             loss = self.loss(y_batch, probs)
 
             # append loss to training history
@@ -126,4 +138,3 @@ class NeuralNetworkClassifier:
         s += '=' * (len('Layer Name\tWeight Dim\tBias Dim\tTotal Parameters\n')+20) + '\n'
         s += f'\t\t\t\t\t\t{self._total_parameters()}'
         return s
-
