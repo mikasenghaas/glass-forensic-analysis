@@ -1,45 +1,25 @@
+# external libraries
 import numpy as np
 from matplotlib import pyplot as plt
-from mlxtend.plotting import plot_decision_regions
 
+# custom imports
 from scripts.models import DecisionTreeClassifier
-from scripts.metrics import accuracy_score
 
+from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.plotting import plot_2d_decision_regions
+from scripts.utils import get_data
 
-from sklearn.datasets import load_iris
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-#from sklearn.tree import DecisionTreeClassifier
-
+np.random.seed(1)
 
 def main():
-    # iris data 
-    X, y = load_iris(return_X_y=True)
-    X=X[:, :2]
+    # ------ loading and preprocessing ------
+    X_train, X_test, y_train, y_test = get_data(raw=True, scaled=True)
 
-    # make dataset unique to ensure 100% training accuracy for max_depth 
-    uniq_idx = np.unique(X[:, :2], return_index=True, axis=0)[1]
-    X = X[uniq_idx, :2]
-    y = y[uniq_idx]
-    #y = y[y!=2]
-
-    """
-    # scale features for gradient descent to work properly
-    scaler = StandardScaler()
-    X = scaler.fit_transform(X)
-    """
-
-    # train test split to evaluate out-of-bag-performance
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    # ------ constructing model ------
 
     # initialise and train model
-    clf = DecisionTreeClassifier(max_depth=None)
+    clf = DecisionTreeClassifier(max_depth=4) # most generalising; can achieve 1.0 accuracy for depth >= 8
     clf.fit(X_train, y_train)
-
-    print(clf._model_name)
-    #print(clf)
-    print(clf.score())
 
     # get predictions for training and test split
     train_preds = clf.predict(X_train)
@@ -49,9 +29,8 @@ def main():
     print(f'Training Accuracy: {accuracy_score(y_train, train_preds)}')
     print(f'Test Accuracy: {accuracy_score(y_test, test_preds)}')
 
-    fig = plot_2d_decision_regions(X_train, y_train, clf, 
-                                    show_probs=False, title='DecisionTreeClassifier on Iris')
-    plt.show()
+    print(confusion_matrix(y_test, test_preds, as_frame=True))
 
 if __name__ == '__main__':
     main()
+
