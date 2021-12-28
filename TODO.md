@@ -44,14 +44,12 @@ all eda on the entire dataset (merge train and test before)
 
 ### Neural Network
 - [x] implement the base class into neural net (so that intcode works in plotting)
-- [ ] generate more test cases to check performance (correctness and speed of implementation)
-- [ ] maybe: generalise model to only take hidden layers (and infer input and output layer from fitted data)
-      -> here we need to make a design choice: either only add layers on call to .fit() or ask for n_features, n_classes
-         during initialisation
 - [x] implement 'softmax' activation for dense layer
 - [x] implement mapping to account for generic target vectors
 - [x] check correctness of other loss-functions (mse and cross-entropy currently not working)
-- [ ] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
+- [x] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
+- [x] generate more test cases to check performance (correctness and speed of implementation)
+- [ ] improvement training speed of model
 
 ### Plotting
 - [x] make plot_2d_decision_function() check for predict_proba function of model and 
@@ -77,7 +75,13 @@ def train_and_evaluate(model : mlmodel, params : dict, score: 'macro_recall'):
 - [ ] build and export final model as trained from entire dataset using best test-performance with best
       selected features
 
+## General
 
-
-
-
+- [ ] Move loading of data, normalising and splitting into utils package
+- [ ] create function to create neural net model
+- [ ] create separate scripts for training and evaluating the different models:
+  - [x] custom nn
+  - [ ] custom dt
+  - [ ] sklearn dt
+  - [x] keras nn
+  - [ ] sklearn ensemble
