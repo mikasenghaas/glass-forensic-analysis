@@ -63,8 +63,8 @@ class Var:
         return int(self.v)
 
     def __repr__(self):
-        #return f'{self.v}'
-        return f"Var(v={self.v}, grad={self.grad})"
+        return f'{self.v}'
+        #return f"Var(v={self.v}, grad={self.grad})"
 
 
 if __name__ == '__main__':
