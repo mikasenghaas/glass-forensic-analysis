@@ -24,7 +24,6 @@ def main():
     y = y[uniq_idx]
     #y = y[y!=2]
 
-
     """
     # scale features for gradient descent to work properly
     scaler = StandardScaler()
@@ -35,11 +34,11 @@ def main():
     X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     # initialise and train model
-    clf = DecisionTreeClassifier()
+    clf = DecisionTreeClassifier(max_depth=None)
     clf.fit(X_train, y_train)
 
     print(clf._model_name)
-    print(clf)
+    #print(clf)
     print(clf.score())
 
     # get predictions for training and test split

@@ -112,7 +112,7 @@ class DecisionTree:
                 curr = q.pop()
                 if curr.depth > depth:
                     depth = curr.depth
-                    s += f'\nCurrent Depth: {curr.depth}'
+                    s += f'\nCurrent Depth: {curr.depth}\n'
                     s += f"{'='*15}\n"
                 s += curr.__str__() + '\n'
 
