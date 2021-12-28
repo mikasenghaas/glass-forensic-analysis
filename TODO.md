@@ -25,9 +25,9 @@ all eda on the entire dataset (merge train and test before)
 - [ ] more checkers and validators to ensure data integrity and useful error messages
 
 ### Make Base Model Classifier
-- [ ] have string -> int mapping defined
+- [x] have string -> int mapping defined
 - [ ] commonly used attributes
-- [ ] is_fitted method
+- [x] is_fitted method
 
 ### Decision Tree
 - [ ] Add more stop criterions 
@@ -43,15 +43,14 @@ all eda on the entire dataset (merge train and test before)
 - [ ] test different criterion functions
 
 ### Neural Network
+- [x] implement the base class into neural net (so that intcode works in plotting)
 - [ ] generate more test cases to check performance (correctness and speed of implementation)
 - [ ] maybe: generalise model to only take hidden layers (and infer input and output layer from fitted data)
       -> here we need to make a design choice: either only add layers on call to .fit() or ask for n_features, n_classes
          during initialisation
-- [ ] implement 'softmax' activation for dense layer
-- [ ] change dense layer, st. it only takes number of neurons (ie. infers number of input neurons automatically)
-- [ ] implement mapping to account for generic target vectors
-- [ ] check correctness of other loss-functions (mse and cross-entropy currently not working)
-
+- [x] implement 'softmax' activation for dense layer
+- [x] implement mapping to account for generic target vectors
+- [x] check correctness of other loss-functions (mse and cross-entropy currently not working)
 - [ ] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
 
 ### Plotting
@@ -77,3 +76,8 @@ def train_and_evaluate(model : mlmodel, params : dict, score: 'macro_recall'):
 - [ ] report final performance from returned best model on test set
 - [ ] build and export final model as trained from entire dataset using best test-performance with best
       selected features
+
+
+
+
+
