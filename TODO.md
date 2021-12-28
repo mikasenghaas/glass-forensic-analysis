@@ -50,10 +50,12 @@ all eda on the entire dataset (merge train and test before)
 - [x] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
 - [x] generate more test cases to check performance (correctness and speed of implementation)
 - [ ] improvement training speed of model
+- [ ] take validation split as input on call to fit() and adjust training based on val loss as well (?)
 
 ### Plotting
 - [x] make plot_2d_decision_function() check for predict_proba function of model and 
       plot sizes according to predict proba
+- [ ] make generic function to plot training/ loss history 
 
 ### Evaluate Correctness
 - [ ] DT:plot decision boundaries for generic 2d-feature classification task using classification 
