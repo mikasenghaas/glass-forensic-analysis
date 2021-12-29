@@ -46,7 +46,7 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         return X
 
-    def fit(self, X, y, batch_size=1, epochs=1000, lr = 0.01, verbose=0):
+    def fit(self, X, y, batch_size=1, epochs=1000, lr = 0.01, save_at=None, verbose=0):
         self.X = validate_feature_matrix(X)
         self.X = convert_to_var(self.X)
         self.y = y 
@@ -76,9 +76,15 @@ class NeuralNetworkClassifier(BaseClassifier):
         else:
             assert False, 'wrong type for batch size'
 
+        if not save_at is None:
+            assert isinstance(save_at, list), 'save_at must be of type list'
+            assert all(save_at) <= epochs and all(save_at) > 0, 'all values in save_at must be at most epochs and greater 0'
+            save_at = set(save_at)
+
         # training loop
         self.loss_history = []
         self.accuracy_history = []
+        self.saves = []
         for epoch in range(epochs):
             start_epoch = default_timer()
             if batch_size < self.n :
@@ -111,8 +117,14 @@ class NeuralNetworkClassifier(BaseClassifier):
                 param.v -= lr * param.grad
 
             # compute training accuracy
-            training_accuracy = accuracy_score(self.y, self.predict(self.X)) # 20% of epoch time
+            preds = self.predict(self.X)
+            training_accuracy = accuracy_score(self.y, preds) # 20% of epoch time
             self.accuracy_history.append(training_accuracy) 
+
+            if save_at:
+                if epoch in save_at:
+                    print('Saved.')
+                    self.saves.append(preds)
 
             if verbose:
                 if epoch % verbose == 0:
