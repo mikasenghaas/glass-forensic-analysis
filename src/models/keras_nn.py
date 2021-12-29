@@ -5,6 +5,7 @@ from scripts.utils import get_data
 from scripts.metrics import accuracy_score, confusion_matrix
 from sklearn.preprocessing import OneHotEncoder
 
+import keras
 from keras.models import Sequential
 from keras.layers import Dense
 from tensorflow.keras.optimizers import Adam, SGD
@@ -35,30 +36,36 @@ def main():
     y_val_hot = encoder.fit_transform(y_val.reshape(-1, 1))
     y_test_hot = encoder.fit_transform(y_test.reshape(-1, 1))
 
-
     #------ constructing model ------
     
     # network architecture
     nn = Sequential()
-    nn.add(Dense(20, input_shape=(9,), activation='relu', name='fc1'))
+    nn.add(Dense(5, input_dim=9, activation='relu', name='fc1'))
+    #nn.add(keras.layers.Dropout(0.4))
+    #nn.add(Dense(8, activation='relu', name='fc2'))
+    #nn.add(keras.layers.Dropout(0.4))
+    #nn.add(Dense(12, activation='relu', name='fc3'))
     nn.add(Dense(6, activation='softmax', name='output'))
 
     # define optimiser, loss and optimisation target
     nn.compile(
-            optimizer=SGD(lr=0.1),
+            optimizer=Adam(lr=0.005),
             loss='categorical_crossentropy', 
             metrics=['accuracy'])
 
     # print overview of neural net architecture (number of (active) params to train per layer and in total)
     print(nn.summary())
-
+    
+    #es_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', patience=50)
+        
     # train model
-    epochs = 100
+    epochs = 500
     history = nn.fit(X_train, y_train_hot,
                batch_size=1,
                epochs=epochs,
                verbose=2,
-               validation_data=(X_val, y_val_hot)) # train with validation split (here test data)
+               validation_data=(X_val, y_val_hot))
+               # callbacks=[es_stopping]) # train with validation split (here test data)
 
     # plot training/ validation accuracy and loss history
     fig, ax = plt.subplots(ncols=2, figsize=(8,3))
