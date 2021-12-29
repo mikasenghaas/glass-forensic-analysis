@@ -1,0 +1,14 @@
+Fitting 5 folds for each of 168 candidates, totalling 840 fits
+Best Number of Estimators 50
+Best Criterion entropy
+Best Max Depth 10
+Bootstrap Training Samples False
+Training Accuracy: 1.0
+Test Accuracy: 0.8307692307692308
+
+[[18  0  2  0  0  1]
+ [ 1 19  0  2  1  0]
+ [ 1  2  2  0  0  0]
+ [ 0  0  0  4  0  0]
+ [ 0  0  0  0  3  0]
+ [ 0  0  0  1  0  8]]

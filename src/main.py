@@ -1,6 +1,6 @@
 import sys
 import os
-from evaluate import generate_summary
+from scripts.utils import generate_summary
 
 def main():
     

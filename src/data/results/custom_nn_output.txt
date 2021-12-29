@@ -1,0 +1,41 @@
+Name: CustomModel
+
+Layer		Weight Dim	Bias Dim	Total Parameters
+================================================================
+fc1		(9, 20)		(20,)		200
+Output Layer	Not yet fitted
+====================================================================
+						200
+> Epoch: 1 - Batch: 10 - Time: 0.66s - Loss: 1.65379765825838 - Training Accuracy: 0.12
+> Epoch: 6 - Batch: 10 - Time: 0.49s - Loss: 0.4485781942369922 - Training Accuracy: 0.49
+> Epoch: 11 - Batch: 10 - Time: 0.49s - Loss: 0.6453660384035371 - Training Accuracy: 0.59
+> Epoch: 16 - Batch: 10 - Time: 0.61s - Loss: 0.4810909023765487 - Training Accuracy: 0.59
+> Epoch: 21 - Batch: 10 - Time: 0.42s - Loss: 0.325899840254904 - Training Accuracy: 0.65
+> Epoch: 26 - Batch: 10 - Time: 0.42s - Loss: 0.2839516454374272 - Training Accuracy: 0.65
+> Epoch: 31 - Batch: 10 - Time: 0.51s - Loss: 0.26689538657534173 - Training Accuracy: 0.68
+> Epoch: 36 - Batch: 10 - Time: 0.5s - Loss: 0.2870751309150847 - Training Accuracy: 0.68
+> Epoch: 41 - Batch: 10 - Time: 0.5s - Loss: 0.43325018985978603 - Training Accuracy: 0.69
+> Epoch: 46 - Batch: 10 - Time: 0.49s - Loss: 0.24019876088918113 - Training Accuracy: 0.71
+Training Accuracy: 0.7171717171717171
+Validation Accuracy: 0.56
+Test Accuracy: 0.6923076923076923
+
+Training Confusion Matrix
+               Predicted Class                                                  
+                             1         2         3         5         6         7
+Actual Class 1        0.282828  0.050505  0.000000  0.000000  0.000000  0.000000
+             2        0.101010  0.282828  0.000000  0.010101  0.000000  0.000000
+             3        0.050505  0.010101  0.010101  0.000000  0.000000  0.000000
+             5        0.000000  0.040404  0.000000  0.020202  0.000000  0.000000
+             6        0.000000  0.010101  0.000000  0.010101  0.010101  0.000000
+             7        0.000000  0.000000  0.000000  0.000000  0.000000  0.111111
+
+Test Confusion Matrix
+               Predicted Class                                                  
+                             1         2         3         5         6         7
+Actual Class 1        0.307692  0.015385  0.000000  0.000000  0.000000  0.000000
+             2        0.123077  0.215385  0.000000  0.000000  0.015385  0.000000
+             3        0.076923  0.000000  0.000000  0.000000  0.000000  0.000000
+             5        0.000000  0.015385  0.000000  0.046154  0.000000  0.000000
+             6        0.015385  0.015385  0.015385  0.000000  0.000000  0.000000
+             7        0.000000  0.000000  0.000000  0.015385  0.000000  0.123077
