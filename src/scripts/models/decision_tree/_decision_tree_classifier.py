@@ -1,49 +1,66 @@
 import math
-from collections import Counter
-import numpy as np 
+import numpy as np
 
 from ...base import BaseClassifier
 from ._decision_tree import DecisionTree
-from ...metrics import binary_gini, gini, entropy
 
 class DecisionTreeClassifier(BaseClassifier, DecisionTree):
+
+    """Class allowing to specify parameters of the model.
+
+    This class serves as a high level client facing API.
+    It allows to specify all hyper parameters important 
+    for training process.
+
+    Parameters
+    ----------
+    criterion : str, optional
+        How to calculate impurity of nodes.
+    
+    algorithm : str, optional
+        How to approach building process of the tree.
+    
+    max_depth : int, optional
+        Maximum depth of the tree.
+
+    max_features : int or float or str, optional
+        How many features to consider during each split of the node.
+    
+    min_samples_split : int, optional
+        Minimum samples required to be present within the node in order
+        to be able to further split it.
+    
+    random_state : int, optional
+        If using `random` alforithm, it is useful to specify this parameter
+        in order to ensure reproducibility of results.
+    
+    Notes
+    -----
+
+    ``Parent classes``
+    This class inherits from two parent classes: BaseClassifier, DecisionTree.
+    - `BaseClassifier` adds attributes and methods which describe the inputted data
+    such as training data, number of features, classes etc.
+    - `DecisionTree` then adds three important methods: fit, predict, predict_proba.
+    These should allow client to train model and then use it for prediction.
+
+    """
+
     def __init__(self,
-            criterion='gini',
             algorithm='greedy',
+            criterion='gini',
             max_depth=None,
             max_features='auto',
             min_samples_split=2,
-            # max_nods = None,
-            max_leaf_nodes=None,
             random_state=None):
 
         BaseClassifier.__init__(self)
+
         DecisionTree.__init__(
                 self, 
-                algorithm=algorithm, 
+                algorithm=algorithm,
+                criterion=criterion,
                 max_depth=max_depth, 
                 max_features=max_features,
                 min_samples_split=min_samples_split,
-                #max_nodes=max_nodes,
-                max_leaf_nodes=max_leaf_nodes,
                 random_state=random_state)
-
-        if criterion == 'gini':
-            self.criterion = gini
-        elif criterion == 'binary_gini':
-            self.criterion = binary_gini
-        elif criterion == 'entropy':
-            self.criterion = entropy
-        else: 
-            raise Exception('Cannot find this criterion')
-
-    def _evaluate_leaf(self, node):
-        labels = self.y[node.values]
-        counter = Counter(labels)
-        predict = counter.most_common()[0][0] # most_frequent class
-
-        predict_proba = [0 for _ in range(self.k)]
-        for pred, c in counter.items():
-            predict_proba[self.intcode[pred]] = c / sum(counter.values())
-
-        return predict, predict_proba

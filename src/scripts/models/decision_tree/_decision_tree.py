@@ -1,55 +1,100 @@
 import math
-import numpy as np 
+from collections import Counter
+import numpy as np
 
 from ._node import Node
-from ...utils import * 
+from ...utils import validate_feature_matrix, validate_target_vector, check_consistent_length
+from ...metrics import binary_gini, gini, entropy
+
 
 class DecisionTree:
+
+    """DecisionTree data structure which can be used for Classification or Regression.
+
+    Attributes
+    ----------
+    root : :class:`Node`
+        Root node of this tree.
+    
+    num_nodes : int
+        Number of nodes that this tree has.
+    
+    num_leaf_nodes : int
+        Number of leaf nodes that this tree has.
+
+    Notes
+    -----
+    For description of input parameters, refer to the :class:`DecisionTreeClassifier`.
+
     """
-    Parent Class,not intended for use. Use children classes DecisionTreeClassifier()
-    """
+
     def __init__(
             self, 
-            algorithm='greedy', 
+            algorithm='greedy',
+            criterion='gini', 
             max_depth=None, 
             max_features='auto',
             min_samples_split=2,
-            #max_nodes=None,
-            max_leaf_nodes=None,
             random_state=None):
 
-        # decision tree metrics
+        # User defined attributes
+        self.algorithm = algorithm
+        self.criterion = criterion
+        self.max_features = max_features
+        self.min_samples_split = min_samples_split
+        self.max_depth = max_depth if max_depth else math.inf
+        np.random.seed(random_state)
+
+        # Run additional setup based on inputed parameters
+        self._run_init_setup()
+
+        # Information about this tree
         self.root = None
         self.num_nodes = 0
         self.num_leaf_nodes = 0
 
-        self.criterion = None
-        self.algorithm = algorithm
+    def _run_init_setup(self):
 
-        # the number of features to search for in best split (if None: entire feature space)
-        self.max_features = max_features 
-        # minimum number of samples on node for it to be able to split (must be int)
-        self.min_samples_split = min_samples_split
+        """Run neccessary proccesses for initialization of the class.
 
-        # max depth criterion
-        if max_depth == None: self.max_depth = math.inf 
-        else: self.max_depth = max_depth
-
-        """
-        # max leaf nodes criterion
-        if max_leaf_nodes == None: self.max_leaf_nodes = math.inf 
-        else: self.max_leaf_nodes = max_leaf_nodes
-
-        # max nodes criterion
-        if max_leaf_nodes == None: self.max_leaf_nodes = math.inf 
-        else: self.max_leaf_nodes = max_leaf_nodes
+        Notes
+        -----
+        The neccessary processes are:
+        - Assignment of relevant criterion function
         """
 
-        # set random seed
-        np.random.seed(random_state)
+        # Assignment of relevant criterion function
+        if self.criterion == 'gini':
+            self.criterion = gini
+        elif self.criterion == 'binary_gini':
+            self.criterion = binary_gini
+        elif self.criterion == 'entropy':
+            self.criterion = entropy
+        else: 
+            raise Exception('Cannot find this criterion')
 
+    def _run_training_setup(self, X, y):
 
-    def fit(self, X, y):
+        """Run preliminary setup before the start of training.
+
+        Parameters
+        ----------
+        X : 2d-array
+            Training dataset
+        y : 1d-array
+            Target values.
+
+        Notes
+        -----
+        The following things are done:
+        - Validation of input tensors X and y - X must be 2 dimensional.
+        If it is 1 dimensional, transformation to 2D is attempted. y must be 1 dimensional.
+        - X and y must have identical first dimension
+        - Parse number of training records `n`, size of feature space `p` and # of `unique` classes `k`
+        - Map provided unique classes to internal normalized format, i.e., 0, 1, 2, ...
+        - Determination of max features variable
+        """
+
         self.X = validate_feature_matrix(X)
         self.y = validate_target_vector(y)
         check_consistent_length(X, y)
@@ -70,14 +115,47 @@ class DecisionTree:
         elif self.max_features == 'log2':
             self.max_features = int(np.ceil(np.log2(self.p)))
 
-        # root node
+    def fit(self, X, y):
+
+        """Build decision tree.
+
+        Parameters
+        ----------
+        X : 2d-array
+            Training dataset
+        y : 1d-array
+            Target values.
+        """
+
+        # Run training setup
+        self._run_training_setup(X, y)
+
+        # Initiliaze a root node
         self.root = Node(size=self.n, values=np.arange(self.n), depth=1, _type='root')
         self.num_nodes += 1
 
+        # Build the tree
         self._split(self.root)
         self.fitted = True
 
     def predict_proba(self, X):
+
+        """Return 2d array with probabilities for given classes.
+
+        Traverse the tree until you reach a leaf node. Then,
+        return the probabilites associated with all classes.
+
+        Parameters
+        ----------
+        X : 2d array
+            Samples based on which to predict corresponding class probabilities.
+
+        Returns
+        -------
+        2d array
+            n x k array where n is number of provided samples and k is number of classes.
+        """
+
         X = validate_feature_matrix(X)
         n = X.shape[0]
 
@@ -85,16 +163,32 @@ class DecisionTree:
         for i in range(n):
             curr = self.root
             while not curr.is_leaf():
-                if curr.decision(X[i]) == True:
-                    curr = curr.right
-                else: 
-                    curr = curr.left
+                if curr.left and curr.right:
+                    if curr.decision(X[i]):
+                        curr = curr.left
+                    else: 
+                        curr = curr.right
+                else:
+                    curr = curr.left or curr.right
 
             probs.append(curr.predict_proba)
 
         return np.array(probs)
 
     def predict(self, X):
+
+        """Predict classes for given dataset X.
+
+        Parameters
+        ----------
+        X : 2d-array
+            Dataset based on which you want to make a prediction.
+        
+        Returns
+        -------
+        1d-array
+            Returns array with predictions.
+        """
         return np.vectorize(self.label.get)(np.argmax(self.predict_proba(X), axis=1))
 
     def __len__(self):
@@ -125,23 +219,28 @@ class DecisionTree:
 
         return s
 
-    def _is_pure(self, node):
-        return self.criterion(self.y[node.values]) == 0
-
-    def _check_criterion(self, node):
-        depth_not_reached = node.depth <= self.max_depth
-        min_samples_not_reached = len(node.values) >= self.min_samples_split
-        #max_nodes_not_reached = self.num_nodes < self.max_nodes
-        #max_leaf_nodes_not_reached = self.num_leaf_nodes < self.max_leaf_nodes 
-        can_split = len(np.unique(self.X[node.values], axis=0)) > 1
-
-        return (depth_not_reached and 
-                # max_nodes_not_reached and 
-                # max_leaf_nodes_not_reached and 
-                min_samples_not_reached and
-                can_split)
 
     def _best_split(self, X, y):
+
+        """Find best split from given feature space.
+
+        Parameters
+        ----------
+        X : 2d-array
+            Subset of the original dataset (self.X)
+        y : 1d-array
+            Subset of the original targets (self.y)
+        
+        Returns
+        -------
+        loss : float
+            Measure of how good the split of this node is.
+        p : int
+            Index of the feature according to which the split is supposed to be done.
+        val : float or int
+            Value according which to do the split.
+        """
+
         if self.algorithm == 'greedy':
             loss = math.inf 
             best_pair = None 
@@ -164,85 +263,195 @@ class DecisionTree:
                         loss = weighted_impurity
                         best_pair = (p, val)
 
-            return loss, best_pair
+            return loss, best_pair[0], best_pair[1]
+        
+        else:
+            raise Exception('You have specified algorithm which is not implemented.')
+    
+    def _get_child_info(self, node, X):
 
-        elif self.algorithm == 'random':
-            feature_space = np.random.choice(list(range(self.p)), size=self.max_features, replace=False)
+        """Get info about given node's children.
 
-            p = np.random.choice(feature_space)
+        By info, it is precisely meant size of both children
+        and relevant indices.
 
-            sorted_vals = sorted(list(set(X[:, p])))
-            while len(sorted_vals) <= 1:
-                p = np.random.choice(feature_space)
+        Parameters
+        ----------
+        node : :class:`Node`
+            Parent node.
+        X : 2d array
+            Subset of the original training dataset (self.X)
 
-                sorted_vals = sorted(list(set(X[:, p])))
+        Returns
+        -------
+        sizes : list
+            List with size of both children.
+        
+        left_indices : 1d array
+            Indices of samples in the left node.
 
-            splits = [(sorted_vals[i]+sorted_vals[i+1]) / 2 for i in range(len(sorted_vals)-1)]
+        right_indices : 1d array
+            Indices of samples in the right node.
+        """
 
-            val = np.random.choice(splits)
-
-            lower_val = X[:, p] < val
-            split1 = y[lower_val]
-            split2 = y[~lower_val]
-
-            split1_impurity = self.criterion(split1)
-            split2_impurity = self.criterion(split2)
-
-            weighted_impurity = (split1_impurity * len(split1) + split2_impurity * len(split2)) / self.n
-
-            return weighted_impurity, (p, val)
-
-
-    def _split(self, curr):
-        # curr is initialised as node with size, indices of values and depth
-        # find best split
-        X, y = self.X[curr.values], self.y[curr.values] # consider training samples that are in split of current node
-
-        loss, best_pair = self._best_split(X, y) # find best pair to split further
-
-        # assign loss and split criterion
-        p, val = best_pair
-        curr.loss = loss
-        curr.p = p 
-        curr.val = val
-
-        # compute new split
+        # Compute new split
         train_decisions = []
         for x in X:
-            train_decisions.append(curr.decision(x))
+            train_decisions.append(node.decision(x))
         train_decisions = np.array(train_decisions)
 
-        curr.split = [curr.size - sum(train_decisions), sum(train_decisions)]
+        sizes = node.split = [sum(train_decisions), node.size - sum(train_decisions)]
 
-        # find new indices in splits
+        # Find new indices in splits
         next_values = [[], []]
-        for i in curr.values:
-            if curr.decision(self.X[i]) == 0:
+        for i in node.values:
+            if node.decision(self.X[i]):
                 next_values[0].append(i)
             else:
                 next_values[1].append(i)
+        left_indices, right_indices = next_values
 
-        #next_values = [np.array(next_values[0]), np.array(next_values[1])]
+        return sizes, np.array(left_indices), np.array(right_indices)
 
-        # initialise new nodes
-        curr.left = Node(size=curr.split[0], values=next_values[0], depth=curr.depth+1)
-        self.num_nodes += 1
+    
+    def _is_pure(self, node):
 
-        # split further if not pure or pre-pruning stop criterion not reached
-        if not self._is_pure(curr.left) and self._check_criterion(curr.left):
-            self._split(curr.left)
-        else:
-            # otherwise make leaf
-            curr.left.type = 'leaf'
-            curr.left.predict, curr.left.predict_proba = self._evaluate_leaf(curr.left)
-            self.num_leaf_nodes += 1
+        """Return if given node is pure or not.
 
-        curr.right = Node(size=curr.split[1], values=next_values[1], depth=curr.depth+1)
-        self.num_nodes += 1
+        Pure means that the given node only contains
+        samples with the same class.
 
-        if not self._is_pure(curr.right) and self._check_criterion(curr.right):
-            self._split(curr.right)
-        else:
-            curr.right.type = 'leaf'
-            curr.right.predict, curr.right.predict_proba = self._evaluate_leaf(curr.right)
-            self.num_leaf_nodes += 1
+        Parameters
+        ----------
+        node : :class:`Node`
+            Leaf node which you want to evaluate.
+
+        Returns
+        -------
+        bool
+            Is given node pure or not.
+        """
+
+        self.criterion(self.y[node.values]) == 0
+
+    def _check_criterion(self, node):
+
+        """Check criteria neccessary to split the given node.
+
+        Parameters
+        ----------
+        node : :class:`Node`
+            Leaf node which you want to evaluate.
+
+        Returns
+        -------
+        bool
+            Can you split the given node.
+        """
+
+        # Criteria
+        not_pure = not self._is_pure(node)
+        depth_not_reached = node.depth <= self.max_depth
+        min_samples_not_reached = len(node.values) >= self.min_samples_split
+        can_split = len(np.unique(self.X[node.values], axis=0)) > 1
+
+        # Result
+        res = depth_not_reached and min_samples_not_reached and can_split and not_pure
+
+        return res
+
+    def _evaluate_leaf(self, node):
+
+        """Return predicted class and probabilities of all classes.
+
+        Parameters
+        ----------
+        node : :class:`Node`
+            Leaf node which you want to evaluate.
+        
+        Returns
+        -------
+        predict : int
+            Predicted class.
+        predict_proba : list
+            Probabilities of all classes
+        """
+
+        labels = self.y[node.values]
+        counter = Counter(labels)
+        predict = counter.most_common()[0][0] # most_frequent class
+
+        predict_proba = [0 for _ in range(self.k)]
+        for pred, c in counter.items():
+            predict_proba[self.intcode[pred]] = c / sum(counter.values())
+
+        return predict, predict_proba
+
+    def _split(self, curr):
+
+        """Split provided node.
+
+        High level overview of algorithm (see further explanation in Notes):
+        1. Compute optimal split for the given :class:`Node`.
+        2. Compute info about two child nodes which is needed to initiliaze them
+        3. Initialize child nodes and for each
+         3A. IF ALLOWED split it further
+         3B. ELSE Make it leaf node
+        Repeat the same process `recursively`.
+
+        Parameters
+        ----------
+        curr : :class:`Node`
+            Current node which should be splitted.
+        
+        Notes
+        -----
+
+        `Finding optimal split`
+        To be added.
+
+        `Get info about child nodes`
+        - Get boolean array which represents the split of data - True = left node, False = right node
+        - Get indices of samples which should belong to left and right child nodes respectively
+
+        `Do the split`
+        There are two possible scenario for the node in question: split it further, make it leaf node
+        Split it further if:
+        - is NOT pure (i.e. does not contain just one type of class)
+        - its depth is not equal to maximum depth specified
+        - Contains more samples than the specified minimum
+        - Has more than unique sample
+        Otherwise, turn it into leaf node.
+
+        """
+
+        # -- STEP 1 ----------------------------------------------------------------
+        X, y = self.X[curr.values], self.y[curr.values]
+        curr.loss, curr.p, curr.val = self._best_split(X, y)
+
+        # -- STEP 2 ----------------------------------------------------------------
+        sizes, left_indices, right_indices = self._get_child_info(curr, X)
+
+        # -- STEP 3 ----------------------------------------------------------------
+        children = []
+        for node_size, samples_indices in zip(sizes, [left_indices, right_indices]):
+            
+            # Avoid empty nodes
+            if node_size == 0:
+                children.append(None)
+                continue
+
+            # Initialize new node
+            child = Node(size=node_size, values=samples_indices, depth=curr.depth+1)
+            children.append(child)
+            self.num_nodes += 1
+
+            # Further split or leaf
+            if self._check_criterion(child):
+                self._split(child)
+            else:
+                child.type = 'leaf'
+                child.predict, child.predict_proba = self._evaluate_leaf(child)
+                self.num_leaf_nodes += 1
+        
+        curr.left, curr.right = children
