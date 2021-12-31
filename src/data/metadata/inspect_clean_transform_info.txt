@@ -1,0 +1,101 @@
+-- Initial inspection --------------------------------------------------
+Training data
+        RI     Na    Mg    Al     Si     K     Ca   Ba    Fe  type
+0  1.51839  12.85  3.67  1.24  72.57  0.62   8.68  0.0  0.35     2
+1  1.52081  13.78  2.28  1.43  71.99  0.49   9.85  0.0  0.17     2
+2  1.51708  13.72  3.68  1.81  72.06  0.64   7.88  0.0  0.00     2
+3  1.52739  11.02  0.00  0.75  73.08  0.00  14.96  0.0  0.00     2
+4  1.52210  13.73  3.84  0.72  71.76  0.17   9.74  0.0  0.00     1
+
+
+Test data
+        RI     Na    Mg    Al     Si     K    Ca   Ba    Fe  type
+0  1.52101  13.64  4.49  1.10  71.78  0.06  8.75  0.0  0.00     1
+1  1.51721  12.87  3.48  1.33  73.04  0.56  8.43  0.0  0.00     1
+2  1.52213  14.21  3.82  0.47  71.77  0.11  9.57  0.0  0.00     1
+3  1.51623  14.20  0.00  2.79  73.46  0.04  9.04  0.4  0.09     7
+4  1.51829  14.46  2.24  1.62  72.38  0.00  9.26  0.0  0.00     6
+
+
+Training data shape: (149, 10) | Test data shape: (65, 10)
+There is in total 6 classes labeled as: [1 2 3 5 6 7]
+
+
+-- Missing values --------------------------------------------------
+Training data
+RI      0
+Na      0
+Mg      0
+Al      0
+Si      0
+K       0
+Ca      0
+Ba      0
+Fe      0
+type    0
+dtype: int64
+
+
+Test data
+RI      0
+Na      0
+Mg      0
+Al      0
+Si      0
+K       0
+Ca      0
+Ba      0
+Fe      0
+type    0
+dtype: int64
+
+
+-- Label distribution --------------------------------------------------
+
+Map from key to actual name:
+----------------------------------------
+1 --> window_from_building_(float_processed)
+2 --> window_from_building_(non_float_processed)
+3 --> window_from_vehicle
+5 --> container
+6 --> tableware
+7 --> headlamp
+----------------------------------------
+
+Train dataset sorted according to perc
+----------------------------------------
+Key: 2 | Percent: 39.39 %
+Key: 1 | Percent: 33.33 %
+Key: 7 | Percent: 11.11 %
+Key: 3 | Percent: 7.07 %
+Key: 5 | Percent: 6.06 %
+Key: 6 | Percent: 3.03 %
+----------------------------------------
+
+
+Val dataset sorted according to perc
+----------------------------------------
+Key: 1 | Percent: 32.0 %
+Key: 2 | Percent: 28.0 %
+Key: 7 | Percent: 18.0 %
+Key: 3 | Percent: 10.0 %
+Key: 5 | Percent: 6.0 %
+Key: 6 | Percent: 6.0 %
+----------------------------------------
+
+
+Test dataset sorted according to perc
+----------------------------------------
+Key: 2 | Percent: 35.38 %
+Key: 1 | Percent: 32.31 %
+Key: 7 | Percent: 13.85 %
+Key: 3 | Percent: 7.69 %
+Key: 5 | Percent: 6.15 %
+Key: 6 | Percent: 4.62 %
+----------------------------------------
+
+-- Transformation info --------------------------------------------------
+Finished succesfully data transformation using standard scaling and pca.
+Percentage of explained variance by first two components: 51.14 %
+
+
