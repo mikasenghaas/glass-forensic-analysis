@@ -87,34 +87,46 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.saves = []
         for epoch in range(epochs):
             start_epoch = default_timer()
-            if batch_size < self.n :
-                batch_idxs = np.random.choice(list(range(self.n)), batch_size, replace=False) 
-                X_batch = self.X[batch_idxs]
-                y_batch = self.y_hot[batch_idxs]
-            else: 
-                X_batch = self.X
-                y_batch = self.y_hot
+            
+            idx = np.arange(self.n)
+            np.random.shuffle(idx) 
+            batch_idxs = np.array_split(idx, batch_size)
 
-            # get the probabilities for each datapoint of belonging to each class
-            probs = self.forward(X_batch) # batch_size_n x k matrix of probs for each data point for each class 
+            for batch_idx in batch_idxs:
+                X_batch = self.X[batch_idx]
+                y_batch = self.y_hot[batch_idx]
 
-            # compute loss on one-hot encoded target matrix
-            assert not np.any(probs < Var(0.0)), 'probs must be > 0, due to softmax'
-            loss = self.loss(y_batch, probs) / Var(len(y_batch))
+                """
+                if batch_size < self.n :
+                    batch_idxs = np.random.choice(list(range(self.n)), batch_size, replace=False) 
+                    X_batch = self.X[batch_idxs]
+                    y_batch = self.y_hot[batch_idxs]
+                else: 
+                    X_batch = self.X
+                    y_batch = self.y_hot
+                """
+
+                # get the probabilities for each datapoint of belonging to each class
+                probs = self.forward(X_batch) # batch_size_n x k matrix of probs for each data point for each class 
+
+                # compute loss on one-hot encoded target matrix
+                assert not np.any(probs < Var(0.0)), 'probs must be > 0, due to softmax'
+                loss = self.loss(y_batch, probs) / Var(len(y_batch))
+
+
+                # zeroing out gradients
+                for param in self.parameters:
+                    param.grad = 0.0
+
+                # backward prop 
+                loss.backward() # 0.33/0.66 = 50% of epoch time
+
+                # update weights
+                for param in self.parameters: 
+                    param.v -= lr * param.grad
 
             # append loss to training history
             self.loss_history.append(loss.v)
-
-            # zeroing out gradients
-            for param in self.parameters:
-                param.grad = 0.0
-
-            # backward prop 
-            loss.backward() # 0.33/0.66 = 50% of epoch time
-
-            # update weights
-            for param in self.parameters: 
-                param.v -= lr * param.grad
 
             # compute training accuracy
             preds = self.predict(self.X)
@@ -129,7 +141,7 @@ class NeuralNetworkClassifier(BaseClassifier):
             if verbose:
                 if epoch % verbose == 0:
                     end_epoch = default_timer() - start_epoch
-                    print(f'> Epoch: {epoch+1} - Batch: {batch_size} - Time: {round(end_epoch, 2)}s - '\
+                    print(f'> Epoch: {epoch} - Batch: {batch_size} - Time: {round(end_epoch, 2)}s - '\
                             f'Loss: {loss.v} - Training Accuracy: {round(training_accuracy, 2)}')
 
 
