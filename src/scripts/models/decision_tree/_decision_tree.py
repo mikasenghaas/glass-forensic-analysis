@@ -114,6 +114,10 @@ class DecisionTree:
             self.max_features = int(np.ceil(np.sqrt(self.p)))
         elif self.max_features == 'log2':
             self.max_features = int(np.ceil(np.log2(self.p)))
+        elif self.max_features == None or self.max_features == 'max':
+            self.max_features = self.p
+        else:
+            Exception('Dont know this max_feature option.')
 
     def fit(self, X, y):
 
