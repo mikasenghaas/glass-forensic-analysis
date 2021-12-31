@@ -1,5 +1,11 @@
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(''))
+
 import numpy as np
 from matplotlib import pyplot as plt
+from sklearn.metrics import classification_report
 
 from scripts.models import NeuralNetworkClassifier
 from scripts.models.neural_net import DenseLayer
@@ -8,8 +14,10 @@ from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.plotting import plot_2d_decision_regions
 from scripts.utils import get_data
 
-
 np.random.seed(1)
+
+SHOW = False
+SAVE = True
 
 def main():
     # ------ loading and preprocessing ------
@@ -32,11 +40,11 @@ def main():
     Epochs: 1000, Learning Rate: 0.5, Batch Size: 10, 20 nodes, single hidden layer architecture
     """
     # define hyperparameters
-    epochs = 50 
-    lr = 0.5
+    epochs = 100 
+    lr = 0.1
 
     # fit model
-    nn.fit(X_train, y_train, batch_size=10, verbose=5, epochs=epochs, lr=lr)
+    nn.fit(X_train, y_train, batch_size=10, verbose=1, epochs=epochs, lr=lr)
 
     # plot training history
     # plot training/ validation accuracy and loss history
@@ -47,7 +55,11 @@ def main():
         ax[i].set_title(f'History of {title.title()}')
         ax[i].set_xlabel('#Epochs')
         ax[i].legend(loc='best')
-    plt.show()
+
+    if SHOW:
+        plt.show()
+    if SAVE:
+        fig.savefig('./data/figures/custom_nn_training_history.pdf')
 
     # get predictions for training and test split
     train_preds = nn.predict(X_train)
@@ -59,10 +71,9 @@ def main():
     print(f'Validation Accuracy: {accuracy_score(y_val, val_preds)}')
     print(f'Test Accuracy: {accuracy_score(y_test, test_preds)}')
 
-    print('\nTraining Confusion Matrix')
-    print(confusion_matrix(y_train, train_preds, as_frame=True))
-    print('\nTest Confusion Matrix')
-    print(confusion_matrix(y_test, test_preds, as_frame=True))
+    print(confusion_matrix(y_test, test_preds, as_frame=True, normalised=False))
+
+    print(classification_report(y_test, test_preds))
 
 if __name__ == '__main__':
     main()

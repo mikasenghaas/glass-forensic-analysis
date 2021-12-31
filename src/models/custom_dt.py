@@ -1,3 +1,8 @@
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(''))
+
 # external libraries
 import numpy as np
 from matplotlib import pyplot as plt
@@ -18,7 +23,7 @@ def main():
     # ------ constructing model ------
 
     # initialise and train model
-    clf = DecisionTreeClassifier(max_depth=4) # most generalising; can achieve 1.0 accuracy for depth >= 8
+    clf = DecisionTreeClassifier(criterion='gini', max_depth=6, max_features='max') # most generalising; can achieve 1.0 accuracy for depth >= 8
     clf.fit(X_train, y_train)
 
     # get predictions for training and test split
@@ -29,7 +34,7 @@ def main():
     print(f'Training Accuracy: {accuracy_score(y_train, train_preds)}')
     print(f'Test Accuracy: {accuracy_score(y_test, test_preds)}')
 
-    print(confusion_matrix(y_test, test_preds, as_frame=True))
+    print(confusion_matrix(y_test, test_preds, as_frame=True, normalised=False))
 
 if __name__ == '__main__':
     main()
