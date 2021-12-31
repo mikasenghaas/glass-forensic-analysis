@@ -1,7 +1,14 @@
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath(''))
+
 # external libraries
 import numpy as np
 from matplotlib import pyplot as plt
+import seaborn as sns
 from sklearn.datasets import load_iris, make_moons, make_circles
+from sklearn.model_selection import train_test_split
 
 # custom imports
 from scripts.models import DecisionTreeClassifier
@@ -9,6 +16,7 @@ from scripts.models import DecisionTreeClassifier
 from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.plotting import plot_2d_decision_regions
 
+sns.set_style('darkgrid')
 
 # global configs
 np.random.seed(1)
@@ -20,38 +28,34 @@ def main():
     # ------ loading and preprocessing data ------
     iris_X, iris_y = load_iris(return_X_y=True)
     iris_X = iris_X[:, :2]
-    moons_X, moons_y = make_moons(random_state=1)
-    circles_X, circles_y = make_circles(random_state=1)
 
-    data = {'iris': [iris_X, iris_y],
-            'moons': [moons_X, moons_y],
-            'circles': [circles_X, circles_y]}
+    X_train, X_test, y_train, y_test = train_test_split(iris_X, iris_y, test_size=.3)
 
-    # ------ constructing models ------
-    models = []
-    depths = [1, 2, 5, 10, None]
-    for depth in depths:
-        clf = DecisionTreeClassifier(max_depth=depth)
-        models.append(clf)
+    fig, ax = plt.subplots(figsize=(8, 6))
 
-    # ----- plotting --------
-    fig, axes = plt.subplots(nrows = len(data), ncols = len(models), figsize = (10*len(models), 4*len(data)))
-    for i, dataset in enumerate(data.keys()):
-        X, y = data[dataset]
-        for j in range(len(models)):
-            model = models[j]
-            model.fit(X, y)
-            plot_2d_decision_regions(X, y, model, ax=axes[i][j], title=f'DT (max_depth={depths[j]})')
+    depths = list(range(1, 16))
+    train_acc = []
+    test_acc = []
+    for d in depths:
+        clf = DecisionTreeClassifier(max_depth=d)
+        clf.fit(X_train, y_train)
 
-            if j == 0:
-                axes[i][j].set_ylabel(f'{dataset.title()}')
-    fig.tight_layout()
+        train_pred = clf.predict(X_train)
+        test_pred = clf.predict(X_test)
+        train_acc.append(accuracy_score(y_train, train_pred))
+        test_acc.append(accuracy_score(y_test, test_pred))
+
+    sns.lineplot(depths, train_acc, ax=ax, color='blue', label='Training Accuracy')
+    sns.lineplot(depths, test_acc, ax=ax, color='red', label='Test Accuracy')
+    ax.set_title('Training Accuracy on different depths of the tree')
+    ax.set_xlabel('Max Depth of Tree')
+    ax.legend(loc='best')
 
     if SHOW:
         plt.show()
 
     if SAVE:
-        fig.savefig(f'{SAVEPATH}/custom_decision_tree.pdf')
+        fig.savefig(f'{SAVEPATH}/dt_correctness2.pdf')
         print(f'Saved PDF to {SAVEPATH}')
 
 if __name__ == '__main__':
