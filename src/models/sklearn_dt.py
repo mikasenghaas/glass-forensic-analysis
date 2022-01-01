@@ -21,11 +21,11 @@ from scripts.plotting import plot_2d_decision_regions
 from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.utils import get_data, generate_summary
 
+# global configs
+np.random.seed(1)
 DO_PCA = True
 POLYNOMIAL_FEATURES = False
-
 SHOW = True
-np.random.seed(1)
 
 def main():
     # ------ loading and preprocessing ------
@@ -38,14 +38,16 @@ def main():
         X_train = engineer.fit_transform(X_train)
         X_test = engineer.fit_transform(X_test)
 
-    # ------ constructing model ------
     scaler = StandardScaler()
     scaler.fit(X_train)
 
     if DO_PCA:
         pca = PCA()
         pca.fit(X_train)
-    
+
+    # ------ constructing model ------
+
+    if DO_PCA:
         pipe = Pipeline(steps=[('scaler', scaler),
                                ('pca', PCA()),
                                ('decision_tree', DecisionTreeClassifier(splitter='best', max_features=None))])
@@ -72,9 +74,8 @@ def main():
     grid = GridSearchCV(pipe, params, n_jobs=-1, verbose=1)
     grid.fit(X_train, y_train)
 
-    # cv results
-    #print('\n' + '-'*5 + ' CV Results ' + '-'*5)
-    #print(pd.DataFrame(grid.cv_results_))
+
+    # ------ report best hyper parameters ------
 
     # report back best combination of hyperparameters
     print('-'*5 + ' Best Hyperparameters ' + '-'*5)
@@ -93,8 +94,8 @@ def main():
     # final model
     clf = grid.best_estimator_
 
+    # ------ evaluate performance  ------
 
-    # evaluate performance
     train_preds = clf.predict(X_train)
     test_preds = clf.predict(X_test)
 
@@ -104,6 +105,8 @@ def main():
 
     conf_matrix = confusion_matrix(y_test, test_preds, as_frame=True, normalised=False)
     report = classification_report(y_test, test_preds)
+
+    # ------ show and save results ------
 
     if SHOW:
         print('-'*5 + ' Evaluation of Performance ' + '-'*5)
@@ -124,10 +127,8 @@ def main():
                              confusion_matrix = conf_matrix,
                              classification_report = report)
 
+    # ------ show and save decision tree visualisation ------
 
-
-
-    # graphviz plotting
     if input('Plot DT? (y/n)') == 'y':
         if DO_PCA:
             FEATURE_NAMES = [f'PC {i}' for i in range(grid.best_estimator_.get_params()['pca__n_components'])]
@@ -141,20 +142,15 @@ def main():
                        'Tableware',
                        'Headlamp']
 
-        # fig = plt.figure(figsize=(25, 20))
-        # _ = plot_tree(clf['decision_tree'], feature_names=FEATURE_NAMES, class_names=CLASS_NAMES, filled=True)
-
         dot_data = export_graphviz(clf['decision_tree'], out_file=None,
                                    feature_names=FEATURE_NAMES,
                                    class_names=CLASS_NAMES,
                                    filled=True)
-
         graph = graphviz.Source(dot_data, format="png")
 
 
         if SHOW:
             plt.show()
-
             if input('SAVE? (y/n)' ) == 'y':
                 SAVEPATH = './data/figures'
                 FILENAME = 'graphviz_sklearn_dt'
