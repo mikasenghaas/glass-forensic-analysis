@@ -22,7 +22,6 @@ sns.set_style('darkgrid')
 np.random.seed(1)
 SAVE = True
 SHOW = True
-SAVEPATH = './data/figures'
 
 def main():
     # ------ loading and preprocessing data ------
@@ -54,9 +53,10 @@ def main():
     if SHOW:
         plt.show()
 
-    if SAVE:
-        fig.savefig(f'{SAVEPATH}/dt_correctness2.pdf')
-        print(f'Saved PDF to {SAVEPATH}')
+    if input('SAVE? (y/n): ') == 'y':
+        SAVEPATH = './data/figures'
+        fig.savefig(f'{SAVEPATH}/assert_dt_overfit.pdf')
+        print(f'Saved PDF to {SAVEPATH}/assert_dt_overfit.pdf')
 
 if __name__ == '__main__':
     main()

@@ -37,13 +37,13 @@ def main():
 
     # ------ constructing models ------
     models = []
-    depths = [1, 2, 5, 10, None]
+    depths = [1, 5, None]
     for depth in depths:
         clf = DecisionTreeClassifier(max_depth=depth)
         models.append(clf)
 
     # ----- plotting --------
-    fig, axes = plt.subplots(nrows = len(data), ncols = len(models), figsize = (10*len(models), 4*len(data)))
+    fig, axes = plt.subplots(nrows = len(data), ncols = len(models), figsize = (5*len(models), 5*len(data)))
     for i, dataset in enumerate(data.keys()):
         X, y = data[dataset]
         for j in range(len(models)):
@@ -58,9 +58,9 @@ def main():
     if SHOW:
         plt.show()
 
-    if SAVE:
-        fig.savefig(f'{SAVEPATH}/dt_correctness.pdf')
-        print(f'Saved PDF to {SAVEPATH}')
+        if input('SAVE? (y/n): ') == 'y':
+            fig.savefig(f'{SAVEPATH}/assert_dt_toydata.pdf')
+            print(f'Saved figure to {SAVEPATH}/assert_dt_toydata.pdf')
 
 if __name__ == '__main__':
     main()
