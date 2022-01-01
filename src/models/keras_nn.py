@@ -1,10 +1,11 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('.'))
 
 import numpy as np
 from matplotlib import pyplot as plt
+import seaborn as sns
 
 from scripts.utils import get_data, generate_summary
 from scripts.metrics import accuracy_score, confusion_matrix
@@ -18,6 +19,7 @@ from keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam, SGD
 
 np.random.seed(1)
+sns.set_style('darkgrid')
 
 SHOW = True
 SAVE = True
@@ -79,10 +81,12 @@ def main():
     # plot training/ validation accuracy and loss history
     fig, ax = plt.subplots(ncols=2, figsize=(8,3))
     for i, title in zip(range(2), ['loss', 'accuracy']):
-        ax[i].plot(range(len(history.history[title])), history.history[title], label=f'Training {title.title()}')
-        ax[i].plot(range(len(history.history['val_' + title])), history.history['val_'+title], label=f'Validation {title.title()}') 
+        sns.lineplot(range(len(history.history[title])), history.history[title], label=f'Training {title.title()}', ax=ax[i])
+        sns.lineplot(range(len(history.history['val_' + title])), history.history['val_' + title], label=f'Validation {title.title()}', ax=ax[i])
+        #ax[i].plot(range(len(history.history[title])), history.history[title], label=f'Training {title.title()}')
+        #ax[i].plot(range(len(history.history['val_' + title])), history.history['val_'+title], label=f'Validation {title.title()}') 
         ax[i].set_title(f'History of {title.title()}')
-        ax[i].set_xlabel('#Epochs')
+        #ax[i].set_xlabel('#Epochs')
         ax[i].legend(loc='best')
 
     if SHOW:
