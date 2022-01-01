@@ -54,9 +54,7 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.n, self.p = self.X.shape
         self.k = len(np.unique(y))
         
-        # add output layer
-        output_layer = DenseLayer(self.layers[-1].neurons(), self.k, activation='softmax', name='Output')
-        self.add(output_layer)
+        assert self.layers[-1].neurons() == self.k, 'Output Layer must have out dimension equivalent to the number of classes'
 
         # populate label-intcode dictionaries
         unique_classes = np.unique(y)
@@ -166,12 +164,11 @@ class NeuralNetworkClassifier(BaseClassifier):
 
     def summary(self):
         s = f"Name: {self.name}\n\n" 
-        s += 'Layer\t\tWeight Dim\tBias Dim\tTotal Parameters\n'
-        s += '=' * (len('Layer\t\tWeight Dim\tBias Dim\tTotal Parameters\n')+20) + '\n'
+        header = 'Layer\t\tWeight Dim\tBias Dim\tTotal Parameters\n'
+        s += header
+        s += '=' * (len(header)+20) + '\n'
         for layer in self.layers:
             s += repr(layer) + '\n'
-        if not self.fitted:
-            s += 'Output Layer\tNot yet fitted\n'
-        s += '=' * (len('Layer Name\tWeight Dim\tBias Dim\tTotal Parameters\n')+20) + '\n'
+        s += '=' * (len(header)+20) + '\n'
         s += f'\t\t\t\t\t\t{self._total_parameters()}'
         return s
