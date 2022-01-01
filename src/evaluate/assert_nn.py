@@ -16,70 +16,38 @@ from scripts.models.neural_net import DenseLayer
 from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.plotting import plot_2d_decision_regions
 
-
-# global configs
 np.random.seed(1)
-SAVE = True
 SHOW = True
-SAVEPATH = './data/figures'
 
 def main():
-    # ------ loading and preprocessing data ------
-    iris_X, iris_y = load_iris(return_X_y=True)
-    iris_X = iris_X[:, :2]
-    moons_X, moons_y = make_moons(random_state=1)
-    circles_X, circles_y = make_circles(random_state=1)
+    X, y = load_iris(return_X_y=True)
 
     scaler = StandardScaler()  
-    iris_X = scaler.fit_transform(iris_X)
-    moons_X = scaler.fit_transform(moons_X)
-    circles_X = scaler.fit_transform(circles_X)
+    x = scaler.fit_transform(X)
 
-    data = {'iris': [iris_X, iris_y],
-            'moons': [moons_X, moons_y],
-            'circles': [circles_X, circles_y]}
+    clf = NeuralNetworkClassifier(
+            layers = [DenseLayer(n_in=4, n_out=20, activation='relu', name='fc1')],
+            loss='cross_entropy', 
+            name=f'Simple NN'
+            )
 
-    # ----- plotting --------
-    epochs = [50, 100, 200, 500]
+    clf.fit(X, y, epochs=100, lr=0.01, batch_size=10, verbose=1)
 
-    print('starting training')
-    fig, axes = plt.subplots(nrows = len(data), ncols = len(epochs), figsize = (10*len(epochs), 4*len(data)))
-    for i, dataset in enumerate(data.keys()):
-        X, y = data[dataset]
-        for j in range(len(epochs)):
-            clf = NeuralNetworkClassifier(
-                    layers = [DenseLayer(n_in=2, n_out=10, activation='relu', name='fc1')],
-                    loss='cross_entropy', 
-                    name=f'Simple NN'
-                    )
+    loss_history = clf.loss_history
+    acc_history = clf.accuracy_history
 
-            clf.fit(X, y, epochs=epochs[j], lr=0.2, batch_size=1, verbose=1)
-            plot_2d_decision_regions(X, y, clf, ax=axes[i][j], title=f'NN (Epochs: {epochs[j]})')
-
-            if j == 0:
-                axes[i][j].set_ylabel(f'{dataset.title()}')
-    fig.tight_layout()
+    fig, ax = plt.subplots(ncols=2,figsize=(8, 3))
+    ax[0].plot(range(len(loss_history)), loss_history), 
+    ax[0].set_title('Loss History'), 
+    ax[1].plot(range(len(acc_history)), acc_history)
+    ax[1].set_title('Training Accuracy History'), 
 
     if SHOW:
         plt.show()
 
-    if SAVE:
-        fig.savefig(f'{SAVEPATH}/custom_nn.pdf')
-        print(f'Saved PDF to {SAVEPATH}')
-
-
-    """
-    # ------ 100% acuracy on iris ------
-    X, y = load_iris(return_X_y=True)
-    clf = NeuralNetworkClassifier(
-            layers = [DenseLayer(n_in=4, n_out=10, activation='relu', name='fc1')],
-            loss='cross_entropy', 
-            name=f'Test'
-            )
-
-    clf.fit(X, y, batch_size=2**5, epochs=500, lr=0.01, verbose=1)
-    clf.score()
-    """
+        if input('SAVE? (y/n): ') == 'y':
+            fig.savefig('./data/results/assert_nn_overfit.pdf')
+            print('Saved figure to ./data/results/assert_nn_overfit.pdf')
 
 if __name__ == '__main__':
     main()
