@@ -87,3 +87,17 @@ def train_and_evaluate(model : mlmodel, params : dict, score: 'macro_recall'):
   - [ ] sklearn dt
   - [x] keras nn
   - [ ] sklearn ensemble
+
+
+# REPORT
+- [ ] correct text for using passive voice
+- [ ] dont use we
+- [ ] correct correctness plots to 3x3 plots (retrain with better neural nets)
+- [ ] fix all figures, tables to have a label so that we can reference them in text
+- [ ] add more references
+- [ ] adjust styling
+- [ ] run entire text through grammarly
+- [ ] training history plots of nn have a cutoff x label
+- [ ] dt visualiation comes from sklearn implmeentation -> not ours yet (also: should we use pca here, normal features are easier to interpret, also from the eda)
+
+
