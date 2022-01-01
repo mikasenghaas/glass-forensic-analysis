@@ -69,7 +69,7 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.y_hot = convert_to_var(y_hot)
 
         # compute batch size
-        if isinstance(batch_size, float) or batch_size == 1:
+        if isinstance(batch_size, float):
             batch_size = int(X.shape[0] * batch_size)
         elif isinstance(batch_size, int):
             batch_size = batch_size
