@@ -1,10 +1,13 @@
 # script that contains functionality to project data fast and conveniently 
 import numpy as np 
 from sklearn.preprocessing import StandardScaler
+import os
+from config.definitions import ROOT_DIR
 
 def get_data(raw=True, scaled=True, pca=False):
     if raw and not pca:
-        BASEPATH = './data/raw'
+        
+        BASEPATH = os.path.join(ROOT_DIR, 'data', 'raw')
 
         #print(np.loadtxt('../../data/raw/df_test.csv', skiprows=1, delimiter=','))
         train = np.loadtxt(f'{BASEPATH}/df_train.csv', skiprows=1, delimiter=',')
@@ -27,7 +30,8 @@ def get_data(raw=True, scaled=True, pca=False):
         return X_train, X_test, y_train, y_test
 
     elif not raw:
-        BASEPATH = './data/transformed'
+        
+        BASEPATH = os.path.join(ROOT_DIR, 'data', 'transformed')
 
         if scaled and not pca:
             X_train = np.loadtxt(f'{BASEPATH}/train/X_scaled.csv', delimiter=',') 
