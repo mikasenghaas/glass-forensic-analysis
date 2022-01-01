@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.abspath(''))
 # external libraries
 import numpy as np
 from matplotlib import pyplot as plt
+import seaborn as sns
 from sklearn.datasets import load_iris, make_moons, make_circles
 from sklearn.preprocessing import StandardScaler
 
@@ -16,6 +17,7 @@ from scripts.models.neural_net import DenseLayer
 from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.plotting import plot_2d_decision_regions
 
+sns.set_style('darkgrid')
 np.random.seed(1)
 SHOW = True
 
@@ -26,7 +28,8 @@ def main():
     x = scaler.fit_transform(X)
 
     clf = NeuralNetworkClassifier(
-            layers = [DenseLayer(n_in=4, n_out=20, activation='relu', name='fc1')],
+            layers = [DenseLayer(n_in=4, n_out=20, activation='relu', name='fc1'),
+                      DenseLayer(n_in=20, n_out=3, activation='softmax', name='output')],
             loss='cross_entropy', 
             name=f'Simple NN'
             )
@@ -37,17 +40,17 @@ def main():
     acc_history = clf.accuracy_history
 
     fig, ax = plt.subplots(ncols=2,figsize=(8, 3))
-    ax[0].plot(range(len(loss_history)), loss_history), 
+    sns.lineplot(range(len(loss_history)), loss_history, ax=ax[0], color='blue', label='Loss History')
     ax[0].set_title('Loss History'), 
-    ax[1].plot(range(len(acc_history)), acc_history)
+    sns.lineplot(range(len(acc_history)), acc_history, ax=ax[1], color='orange', label='Training Accuracy')
     ax[1].set_title('Training Accuracy History'), 
 
     if SHOW:
         plt.show()
 
         if input('SAVE? (y/n): ') == 'y':
-            fig.savefig('./data/results/assert_nn_overfit.pdf')
-            print('Saved figure to ./data/results/assert_nn_overfit.pdf')
+            fig.savefig('./data/figures/assert_nn_overfit.pdf')
+            print('Saved figure to ./data/figures/assert_nn_overfit.pdf')
 
 if __name__ == '__main__':
     main()

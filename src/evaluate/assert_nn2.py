@@ -43,11 +43,13 @@ def main():
 
     print('starting training')
     fig, axes = plt.subplots(nrows = len(data), ncols = len(epochs), figsize = (5*len(epochs), 5*len(data)))
-    for i, dataset in enumerate(data.keys()):
+    for i, info in enumerate(zip(data.keys(), [3, 2, 2])):
+        dataset, k = info
         X, y = data[dataset]
         for j in range(len(epochs)):
             clf = NeuralNetworkClassifier(
-                    layers = [DenseLayer(n_in=2, n_out=30, activation='relu', name='fc1')],
+                    layers = [DenseLayer(n_in=2, n_out=30, activation='relu', name='fc1'),
+                              DenseLayer(n_in=30, n_out=k, activation='softmax', name='output')],
                     loss='cross_entropy', 
                     name=f'Simple NN'
                     )

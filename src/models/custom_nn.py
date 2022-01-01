@@ -1,10 +1,11 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('.'))
 
 import numpy as np
 from matplotlib import pyplot as plt
+import seaborn as sns
 from sklearn.metrics import classification_report
 
 from scripts.models import NeuralNetworkClassifier
@@ -14,8 +15,9 @@ from scripts.metrics import accuracy_score, confusion_matrix
 from scripts.plotting import plot_2d_decision_regions
 from scripts.utils import get_data, generate_summary
 
+# global settings
+sns.set_style('darkgrid')
 np.random.seed(1)
-
 SHOW = True
 
 def main():
@@ -26,7 +28,8 @@ def main():
 
     #------ constructing model ------
     nn = NeuralNetworkClassifier(
-            layers = [DenseLayer(n_in=9, n_out=50, activation='relu', name='fc1')],
+            layers = [DenseLayer(n_in=9, n_out=20, activation='relu', name='fc1'),
+                      DenseLayer(n_in=20, n_out=6, activation='softmax', name='output')],
             loss='cross_entropy', 
             name='CustomModel'
             )
@@ -39,20 +42,20 @@ def main():
     Epochs: 1000, Learning Rate: 0.5, Batch Size: 10, 20 nodes, single hidden layer architecture
     """
     # define hyperparameters
-    epochs = 100
+    epochs = 100 
     lr = 0.01
 
     # fit model
-    nn.fit(X_train, y_train, batch_size=1, verbose=1, epochs=epochs, lr=lr)
+    nn.fit(X_train, y_train, batch_size=10, verbose=1, epochs=epochs, lr=lr)
 
     # plot training history
     # plot training/ validation accuracy and loss history
     fig, ax = plt.subplots(ncols=2, figsize=(8,3))
     history = {'loss': nn.loss_history, 'accuracy': nn.accuracy_history}
     for i, title in zip(range(2), ['loss', 'accuracy']):
-        ax[i].plot(list(range(1, epochs+1)), history[title], label=f'Training {title.title()}')
+        #ax[i].plot(list(range(1, epochs+1)), history[title], label=f'Training {title.title()}')
+        sns.lineplot(range(1, epochs+1), history[title], label=f'Training {title.title()}', ax=ax[i])
         ax[i].set_title(f'History of {title.title()}')
-        ax[i].set_xlabel('#Epochs')
         ax[i].legend(loc='best')
 
     if SHOW:
