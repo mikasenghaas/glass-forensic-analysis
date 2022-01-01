@@ -19,13 +19,12 @@ from sklearn.metrics import classification_report
 # custom imports
 from scripts.plotting import plot_2d_decision_regions
 from scripts.metrics import accuracy_score, confusion_matrix
-from scripts.utils import get_data
+from scripts.utils import get_data, generate_summary
 
 DO_PCA = True
 POLYNOMIAL_FEATURES = False
 
-SHOW = False
-SAVE = False
+SHOW = True
 np.random.seed(1)
 
 def main():
@@ -74,15 +73,22 @@ def main():
     grid.fit(X_train, y_train)
 
     # cv results
-    print('\n' + '-'*5 + ' CV Results ' + '-'*5)
-    print(pd.DataFrame(grid.cv_results_))
+    #print('\n' + '-'*5 + ' CV Results ' + '-'*5)
+    #print(pd.DataFrame(grid.cv_results_))
 
     # report back best combination of hyperparameters
     print('-'*5 + ' Best Hyperparameters ' + '-'*5)
-    print('Best Criterion:', grid.best_estimator_.get_params()['decision_tree__criterion'])
-    print('Best Max Depth:', grid.best_estimator_.get_params()['decision_tree__max_depth'])
+    best_criterion = grid.best_estimator_.get_params()['decision_tree__criterion']
+    best_max_depth = grid.best_estimator_.get_params()['decision_tree__max_depth']
     if DO_PCA:
-        print('Best Number Of Components:', grid.best_estimator_.get_params()['pca__n_components']); print()
+        best_n_components = grid.best_estimator_.get_params()['pca__n_components']
+
+
+    if SHOW:
+        print('Best Criterion:', best_criterion)
+        print('Best Max Depth:', best_max_depth)
+        if DO_PCA:
+            print('Best PCA Components:', best_n_components)
 
     # final model
     clf = grid.best_estimator_
@@ -92,51 +98,72 @@ def main():
     train_preds = clf.predict(X_train)
     test_preds = clf.predict(X_test)
 
-    print('-'*5 + ' Evaluation of Performance ' + '-'*5)
-    print(f'Training Accuracy: {round(accuracy_score(y_train, train_preds), 2)*100}%')
-    print(f'Validation Accuracy (during 5-fold CV): {round(grid.best_score_, 2)*100}%')
-    print(f'Test Accuracy: {round(accuracy_score(y_test, test_preds), 2)*100}%'); print();
+    train_acc = round(accuracy_score(y_train, train_preds), 2)*100
+    val_acc = round(grid.best_score_, 2)*100
+    test_acc = round(accuracy_score(y_test, test_preds), 2)*100
 
-    print(confusion_matrix(y_test, test_preds, as_frame=True, normalised=False))
-    print(classification_report(y_test, test_preds))
+    conf_matrix = confusion_matrix(y_test, test_preds, as_frame=True, normalised=False)
+    report = classification_report(y_test, test_preds)
+
+    if SHOW:
+        print('-'*5 + ' Evaluation of Performance ' + '-'*5)
+        print(f'Training Accuracy: {train_acc}%')
+        print(f'Validation Accuracy (during 5-fold CV): {val_acc}%')
+        print(f'Test Accuracy: {test_acc}%'); print();
+
+        print(conf_matrix)
+        print(report)
+
+        if input('SAVE? (y/n)' ) == 'y':
+            generate_summary(filepath = './data/results', name='sklearn_dt', 
+                             best_criterion = best_criterion,
+                             best_max_depth = best_max_depth,
+                             training_accuracy = train_acc,
+                             validation_accuracy = val_acc,
+                             test_accuracy = test_acc,
+                             confusion_matrix = conf_matrix,
+                             classification_report = report)
+
+
 
 
     # graphviz plotting
-    if DO_PCA:
-        FEATURE_NAMES = [f'PC {i}' for i in range(grid.best_estimator_.get_params()['pca__n_components'])]
-    else:
-        FEATURE_NAMES = ['RI', 'Na', 'Mg', 'Al', 'Si', 'K', 'Ca', 'Ba', 'Fe']
-    CLASS_NAMES = ['Window from Building (float-processed)',
-                   'Window from Building (non-float processed)',
-                   'Window from Vehicle',
-                   'Container',
-                   'Tableware',
-                   'Headlamp']
-
-    # fig = plt.figure(figsize=(25, 20))
-    # _ = plot_tree(clf['decision_tree'], feature_names=FEATURE_NAMES, class_names=CLASS_NAMES, filled=True)
-
-    dot_data = export_graphviz(clf['decision_tree'], out_file=None,
-                               feature_names=FEATURE_NAMES,
-                               class_names=CLASS_NAMES,
-                               filled=True)
-
-    graph = graphviz.Source(dot_data, format="png")
-
-
-    if SHOW:
-        print('show')
-        plt.show()
-
-    if SAVE: 
-        SAVEPATH = './data/figures'
-        FILENAME = 'graphviz_sklearn_dt'
-
+    if input('Plot DT? (y/n)') == 'y':
         if DO_PCA:
-            FILENAME += '_pca'
+            FEATURE_NAMES = [f'PC {i}' for i in range(grid.best_estimator_.get_params()['pca__n_components'])]
+        else:
+            FEATURE_NAMES = ['RI', 'Na', 'Mg', 'Al', 'Si', 'K', 'Ca', 'Ba', 'Fe']
 
-        graph.render(f'{SAVEPATH}/{FILENAME}')
-        print('saved')
+        CLASS_NAMES = ['Window from Building (float-processed)',
+                       'Window from Building (non-float processed)',
+                       'Window from Vehicle',
+                       'Container',
+                       'Tableware',
+                       'Headlamp']
+
+        # fig = plt.figure(figsize=(25, 20))
+        # _ = plot_tree(clf['decision_tree'], feature_names=FEATURE_NAMES, class_names=CLASS_NAMES, filled=True)
+
+        dot_data = export_graphviz(clf['decision_tree'], out_file=None,
+                                   feature_names=FEATURE_NAMES,
+                                   class_names=CLASS_NAMES,
+                                   filled=True)
+
+        graph = graphviz.Source(dot_data, format="png")
+
+
+        if SHOW:
+            plt.show()
+
+            if input('SAVE? (y/n)' ) == 'y':
+                SAVEPATH = './data/figures'
+                FILENAME = 'graphviz_sklearn_dt'
+
+                if DO_PCA:
+                    FILENAME += '_pca'
+
+                graph.render(f'{SAVEPATH}/{FILENAME}')
+                print('saved')
 
 
 if __name__ == '__main__':
