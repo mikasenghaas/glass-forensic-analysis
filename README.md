@@ -25,6 +25,7 @@ The remaining eight measured features described the chemical composition of the 
 Reproduce the results in the few following steps: 
 
 1. **Clone repository**
+
    Navigate to the desired location of the project on your local machine and run the following command
    to clone this GitHub repository:
 
@@ -33,6 +34,7 @@ Reproduce the results in the few following steps:
    ```
 
 2. **Create `VENV`** *(optional, but recommended to get all dependencies)*
+
     First, navigate to the folder where you are storing your venvs and then use venv to create virtual env 
     for this project as follows: 
     
@@ -56,6 +58,7 @@ Reproduce the results in the few following steps:
     Lastly, make sure your pip is updated: `pip install --upgrade pip`
 
 3. **Install requirements**
+
    Run the following command from the root of the cloned directory to install all dependencies into the virtual venv.
     
    ```
