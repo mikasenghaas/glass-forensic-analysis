@@ -73,6 +73,15 @@ Reproduce the results in the few following steps:
    python main.py
    ```
 
+5. Graphviz Dependency
+   The visualisation of the decision tree is based on the package `graphviz`. It is listed inside the `requirements.txt` and thus
+   installed when initialising the virtual environment. However, for the package to run properly, it must be installed system-wide.
+   To do so, run the following command on macOS:
+
+   ```
+   brew install graphviz
+   ```
+
 ## Documentation 
 
 The project is extensively documented. All classes and helper-function used in this project in the folder `scripts/` come with a docstring. The entire documentation is hosted online through [*sphinx*](https://www.sphinx-doc.org/en/master/) and is visitable [here](https://ml-project-itu.readthedocs.io/en/latest/index.html)
