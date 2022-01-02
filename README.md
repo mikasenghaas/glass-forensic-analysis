@@ -65,7 +65,12 @@ Reproduce the results in the few following steps:
    pip install -r requirements.txt
    ```
 
-4. You are all set. Run main.py in the `src/` folder and run the entire project.
+4. You are all set. Run main.py from the `src/` folder and run the entire project.
+
+   ```
+   cd src
+   python main.py
+   ```
 
 ## Documentation 
 
