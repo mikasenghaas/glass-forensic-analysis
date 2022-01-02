@@ -1,15 +1,34 @@
-# script that contains functionality to project data fast and conveniently 
 import numpy as np 
 from sklearn.preprocessing import StandardScaler
 import os
 from config.definitions import ROOT_DIR
 
 def get_data(raw=True, scaled=True, pca=False):
+
+    """
+    Loads transformed dara according to the given specificatiion.
+
+    Parameters
+    ----------
+    raw : bool
+        Do you want to return the raw data.
+    
+    scaled : bool
+        Do you want to return data which were standard scaled - zero mean, unit variance.
+    
+    pca : bool
+        Do you want to return data which were transformed using pca.
+    
+    Raises
+    ------
+    AssertionError
+        If the specification of data to be returned does not match the available options.
+    """
+
     if raw and not pca:
         
         BASEPATH = os.path.join(ROOT_DIR, 'data', 'raw')
 
-        #print(np.loadtxt('../../data/raw/df_test.csv', skiprows=1, delimiter=','))
         train = np.loadtxt(f'{BASEPATH}/df_train.csv', skiprows=1, delimiter=',')
         test = np.loadtxt(f'{BASEPATH}/df_test.csv', skiprows=1, delimiter=',')
 
@@ -57,12 +76,3 @@ def get_data(raw=True, scaled=True, pca=False):
     else:
         assert False, 'something went wrong with your specifications'
 
-if __name__ == '__main__':
-    X_train, X_val, X_test, y_train, y_val, y_test = get_data(raw=False, scaled=False, pca=False)
-
-    print(f'X_train: {X_train.shape}')
-    print(f'X_val: {X_val.shape}')
-    print(f'X_test: {X_test.shape}')
-    print(f'y_train: {y_train.shape}')
-    print(f'y_val {y_val.shape}')
-    print(f'y_test {y_test.shape}')
