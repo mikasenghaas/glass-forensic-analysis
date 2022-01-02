@@ -24,6 +24,10 @@ SHOW = True
 def main():
     X, y = load_iris(return_X_y=True)
 
+    uniq_idx = np.unique(X, return_index=True, axis=0)[1]
+    X = X[uniq_idx]
+    y = y[uniq_idx]
+
     scaler = StandardScaler()  
     x = scaler.fit_transform(X)
 
@@ -34,7 +38,7 @@ def main():
             name=f'Simple NN'
             )
 
-    clf.fit(X, y, epochs=100, lr=0.01, batch_size=10, verbose=1)
+    clf.fit(X, y, epochs=100, lr=0.01, num_batches=10, verbose=1)
 
     loss_history = clf.loss_history
     acc_history = clf.accuracy_history

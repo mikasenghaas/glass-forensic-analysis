@@ -59,7 +59,7 @@ def main():
         plt.show()
 
         if input('SAVE? (y/n): ') == 'y':
-            fig.savefig(f'{SAVEPATH}/assert_dt_toydata.pdf')
+            fig.savefig(f'{SAVEPATH}/assert_dt_toydata.pdf', dpi=300)
             print(f'Saved figure to {SAVEPATH}/assert_dt_toydata.pdf')
 
 if __name__ == '__main__':

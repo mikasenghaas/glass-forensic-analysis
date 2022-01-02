@@ -54,7 +54,7 @@ def main():
                     name=f'Simple NN'
                     )
 
-            clf.fit(X, y, epochs=epochs[j], lr=0.1, batch_size=5, verbose=1)
+            clf.fit(X, y, epochs=epochs[j], lr=0.1, num_batches=5, verbose=1)
             plot_2d_decision_regions(X, y, clf, ax=axes[i][j], title=f'NN (Epochs: {epochs[j]})')
 
             if j == 0:
