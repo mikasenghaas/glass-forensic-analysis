@@ -86,7 +86,7 @@ Reproduce the results in the few following steps:
 
 ## Documentation 
 
-The project is extensively documented. All classes and helper-function used in this project in the folder `scripts/` come with a docstring. The entire documentation is hosted online through [*sphinx*](https://www.sphinx-doc.org/en/master/) and is visitable [here](https://ml-project-itu.readthedocs.io/en/latest/index.html)
+The project is extensively documented. All classes and helper-function used in this project in the folder `scripts/` come with a docstring. The entire documentation is hosted online through [*sphinx*](https://www.sphinx-doc.org/en/master/) and is visitable [here](https://ml-project.readthedocs.io/en/latest/index.html)
 
 ## Contributers
 
