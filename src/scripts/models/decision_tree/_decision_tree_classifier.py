@@ -37,13 +37,7 @@ class DecisionTreeClassifier(BaseClassifier, DecisionTree):
     Notes
     -----
 
-    ``Parent classes``
-    This class inherits from two parent classes: BaseClassifier, DecisionTree.
-    - `BaseClassifier` adds attributes and methods which describe the inputted data
-    such as training data, number of features, classes etc.
-    - `DecisionTree` then adds three important methods: fit, predict, predict_proba.
-    These should allow client to train model and then use it for prediction.
-
+    **Parent classes**. This class inherits from two parent classes: BaseClassifier, DecisionTree.
     """
 
     def __init__(self,

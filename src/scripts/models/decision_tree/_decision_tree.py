@@ -11,6 +11,28 @@ class DecisionTree:
 
     """DecisionTree data structure which can be used for Classification or Regression.
 
+    Parameters  
+    ----------
+    criterion : str, optional
+        How to calculate impurity of nodes.
+    
+    algorithm : str, optional
+        How to approach building process of the tree.
+    
+    max_depth : int, optional
+        Maximum depth of the tree.
+
+    max_features : int or float or str, optional
+        How many features to consider during each split of the node.
+    
+    min_samples_split : int, optional
+        Minimum samples required to be present within the node in order
+        to be able to further split it.
+    
+    random_state : int, optional
+        If using `random` alforithm, it is useful to specify this parameter
+        in order to ensure reproducibility of results.
+
     Attributes
     ----------
     root : :class:`Node`
@@ -21,11 +43,6 @@ class DecisionTree:
     
     num_leaf_nodes : int
         Number of leaf nodes that this tree has.
-
-    Notes
-    -----
-    For description of input parameters, refer to the :class:`DecisionTreeClassifier`.
-
     """
 
     def __init__(
@@ -396,11 +413,14 @@ class DecisionTree:
         """Split provided node.
 
         High level overview of algorithm (see further explanation in Notes):
-        1. Compute optimal split for the given :class:`Node`.
-        2. Compute info about two child nodes which is needed to initiliaze them
-        3. Initialize child nodes and for each
-         3A. IF ALLOWED split it further
-         3B. ELSE Make it leaf node
+
+        #. Compute optimal split for the given :class:`Node`.
+        #. Compute info about two child nodes which is needed to initiliaze them
+        #. Initialize child nodes and for each
+
+          #. IF ALLOWED split it further
+          #. ELSE Make it leaf node
+        
         Repeat the same process `recursively`.
 
         Parameters
