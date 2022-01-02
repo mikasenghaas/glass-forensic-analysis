@@ -32,7 +32,7 @@ def main():
     # ------ fitting model ------
 
     # initialise and train model
-    clf = DecisionTreeClassifier(criterion='gini', max_depth=6, max_features='max') # most generalising; can achieve 1.0 accuracy for depth >= 8
+    clf = DecisionTreeClassifier(criterion='entropy', max_depth=5, max_features=8) # most generalising; can achieve 1.0 accuracy for depth >= 8
     clf.fit(X_train, y_train)
 
     # ------ evaluate model ------
