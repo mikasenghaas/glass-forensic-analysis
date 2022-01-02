@@ -46,7 +46,7 @@ def main():
     lr = 0.01
 
     # fit model
-    nn.fit(X_train, y_train, batch_size=10, verbose=1, epochs=epochs, lr=lr)
+    nn.fit(X_train, y_train, num_batches=10, verbose=1, epochs=epochs, lr=lr)
 
     # plot training history
     # plot training/ validation accuracy and loss history

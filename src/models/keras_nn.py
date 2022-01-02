@@ -58,8 +58,7 @@ def main():
     nn.add(Dense(6, activation='softmax', name='output'))
 
     # define optimiser, loss and optimisation target
-    nn.compile(
-            optimizer=Adam(lr=0.0005),
+    nn.compile( optimizer=Adam(lr=0.005),
             loss='categorical_crossentropy', 
             metrics=['accuracy'])
 
@@ -72,7 +71,7 @@ def main():
     # train model
     epochs = 500
     history = nn.fit(X_train, y_train_hot,
-               batch_size=5,
+               batch_size=len(X_train), # batch gradient descent (all data points at once)
                epochs=epochs,
                verbose=2,
                validation_split=0.2,

@@ -91,7 +91,7 @@ def plot_2d_decision_regions(x, y, model, meshsize=100, marker='s', colors=None,
 
     # scatter training points
     for k, color, label in zip(np.unique(y), colormap, labels):
-        ax.scatter(x0[y==k], x1[y==k], c=color, s=20, edgecolor='black', linewidth=1, label=label)
+        ax.scatter(x0[y==k], x1[y==k], c=color, s=20, edgecolor='black', linewidth=.5, label=label)
 
     ax.set_title(title, fontweight='bold')
     ax.set_xlabel('$X_1$')
