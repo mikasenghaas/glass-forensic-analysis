@@ -1,6 +1,12 @@
+import sys 
+import os 
+
+sys.path.insert(0, os.path.abspath(''))
+
 # Plotting
 import seaborn as sns
 from matplotlib import pyplot as plt
+from collections import Counter
 sns.set_style("darkgrid")
 sns.set(rc={"xtick.bottom" : True, "ytick.left" : True})
 
@@ -10,8 +16,7 @@ import numpy as np
 
 # For path referencing
 from config.definitions import ROOT_DIR
-import sys
-import os
+from scripts.utils import get_data
 
 # Global constants
 X_train, X_test, y_train, y_test = get_data(raw=True, scaled=False)
@@ -19,7 +24,7 @@ features_names = ['refractive_index', 'sodium', 'magnesium', 'aluminium', 'silic
 
 def run_eda():
     _class_distribution()
-    _feature_five_num_summaries()
+    _feature_fivenumsummaries()
     _each_class_distribution_per_feature()
     _best_2_pca_comp_scatter()
 
