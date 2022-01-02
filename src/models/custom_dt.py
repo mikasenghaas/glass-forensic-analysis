@@ -21,7 +21,7 @@ np.random.seed(1)
 DO_PCA = False
 SHOW = True
 
-def main():
+def run_custom_dt():
     # ------ loading and preprocessing ------
     X_train, X_test, y_train, y_test = get_data(raw=True, scaled=True)
 
@@ -67,4 +67,4 @@ def main():
 
              
 if __name__ == '__main__':
-    main()
+    run_custom_dt()

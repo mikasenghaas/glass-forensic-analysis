@@ -13,10 +13,10 @@ from scripts.utils import get_data
 
 X_train, X_test, y_train, y_test = get_data(raw=True, scaled=False)
 
-
 def run_check_data():
-    print(any_missing_values(X_train, X_test))
-    print(sum_of_chemical_composition(X_train, X_test))
+    print(f'Are there missing values?: {_check_missing_values(X_train, X_test)}')
+    sums = _sum_of_chemical_composition(X_train, X_test)
+    print(f'Sums of chemical composition: Mean: {np.mean(sums)} Std: {np.std(sums)}')
 
 def _check_missing_values(*args):
     # Any missing values

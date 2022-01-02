@@ -28,7 +28,7 @@ DO_PCA = False
 POLYNOMIAL_FEATURES = False
 SHOW = True
 
-def main():
+def run_sklearn_dt():
     # ------ loading and preprocessing ------
 
     # load and split data
@@ -181,4 +181,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    run_sklearn_dt()

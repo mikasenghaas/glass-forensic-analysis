@@ -31,7 +31,7 @@ def predict(nn, X, label):
 
     return preds
 
-def main():
+def run_keras_nn():
     # ------ loading and preprocessing ------
 
     # load and split data
@@ -131,4 +131,4 @@ def main():
                              classification_report = report)
 
 if __name__ == '__main__':
-    main()
+    run_keras_nn()
