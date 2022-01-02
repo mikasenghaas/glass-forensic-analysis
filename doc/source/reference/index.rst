@@ -7,6 +7,7 @@ In this section, you can find full reference to the implemented methods and thei
 
 - :ref:`base-module`
 - :ref:`metrics-module`
+- :ref:`plotting-module`
 - :ref:`decision-tree-module`
 
 .. toctree::
@@ -15,4 +16,5 @@ In this section, you can find full reference to the implemented methods and thei
 
    base
    metrics
+   plotting
    dt
