@@ -7,13 +7,54 @@ from timeit import default_timer
 
 from ...base import BaseClassifier
 from ...utils import validate_feature_matrix, validate_target_vector
-from ...metrics import se, mse, cross_entropy, accuracy_score
+from ...metrics import se, cross_entropy, accuracy_score
 from ._autograd import Var
 from ._dense_layer import DenseLayer
 from ._helper import convert_to_var, softmax, hot_encode
 
 class NeuralNetworkClassifier(BaseClassifier):
-    def __init__(self, layers=[], loss='squared_error', name='NeuralNetworkClassifier'):
+    """NeuralNetworkClassifier 
+
+    This class serves as a high level client facing API. It allows to specify
+    all hyper parameters to initialise a feed forward neural network
+
+
+    Parameters
+    ----------
+    layers : list
+        a list of :class:`DenseLayer`
+
+    loss : str, optional
+        loss function to be minimised (default is 'cross_entropy')
+
+    name : str, optional
+        Name for the classifier
+
+    Attributes
+    ----------
+    X : 2d array
+        Data points to used to train the neural network
+
+    y : 1d array
+        Target classes
+
+    y_hot : 2d array
+        One hot encoded target classes
+
+    n : int
+        number of data points (X.shape[0])
+
+    p : int
+        number of features (X.shape[1])
+
+    fitted : bool
+        Boolean to see whether the classifier has been fit
+
+    parameters : 1d array
+        array of all the parameters
+    """
+
+    def __init__(self, layers=[], loss='cross_entropy', name='NeuralNetworkClassifier'):
         super().__init__()
 
         self.name = name
@@ -29,24 +70,78 @@ class NeuralNetworkClassifier(BaseClassifier):
             self.loss = cross_entropy
         elif loss == 'squared_error':
             self.loss = se
-        elif loss == 'mean_squared_error':
-            self.loss = mse
         else:
             raise NotImplementedError(f"{loss} not yet implemented. Choose from ['cross_entropy', 'squared_error', 'mean_squared_error']") 
 
     def add(self, layer):
+        """Add a dense layer behind the current last dense layer
+
+        layer : :class:`DenseLayer`
+        """
         self.layers.append(layer)
 
     def forward(self, X):
-        """
-        Computes the forward pass of the MLP: x = layer(x) for each layer in layers
+        """Compute the forward pass
+
+        Parameters
+        ----------
+        X : 2d array
+            n x n_in sample to forward through the network, n_in must 
+            correspond to the first :class:`DenseLayer`
+
+        Notes
+        -----
+        Computes the forward pass of the MLP: x = layer(x) for each 
+        layer in layers
+
+        Returns
+        -------
+        n x n_out array where n is the number of data points and n_out 
+        corresponds to the number of neurons in the last :class:`DenseLayer`
         """
         for layer in self.layers:
             X = layer.forward(X)
 
         return X
 
-    def fit(self, X, y, num_batches=1, epochs=1000, lr = 0.01, save_at=None, verbose=0):
+    def fit(self, X, y, num_batches=1, epochs=1000, lr = 0.01, verbose=0):
+        """The training loop of the neural network
+
+        Parameters
+        ----------
+        X : 2d array
+            n x p matrix of data points, where n is the number of data points
+            and p the number of features
+
+        y : 1d array
+            n x 1 vector of target classes, where n is the number of data points
+
+
+        num_batches : int, optional
+            Number of batches used to train the network in every epoch.
+            The parameters are being updated after every forward pass of a batch.
+            Default value is 1 which corresponds to feeding the entire data set X
+            in every epoch
+        
+        epochs : int, optional
+            Number of training loops (default is 1000) 
+
+        lr : float, optional
+            learning rate for the gradient descent step
+
+        verbose : int, optional
+            Prints out during the training (0, 1 or 2)
+
+        Attributes
+        ----------
+        k : int
+            number of unique classes
+
+        loss_history : list
+        
+        accuracy_history : list
+        """
+
         self.X = validate_feature_matrix(X)
         self.X = convert_to_var(self.X)
         self.y = y 
@@ -82,7 +177,6 @@ class NeuralNetworkClassifier(BaseClassifier):
         # training loop
         self.loss_history = []
         self.accuracy_history = []
-        self.saves = []
         idx = np.arange(self.n)
         for epoch in range(epochs):
             start_epoch = default_timer()
@@ -131,11 +225,6 @@ class NeuralNetworkClassifier(BaseClassifier):
             training_accuracy = accuracy_score(self.y, preds) # 20% of epoch time
             self.accuracy_history.append(training_accuracy) 
 
-            if save_at:
-                if epoch in save_at:
-                    print('Saved.')
-                    self.saves.append(preds)
-
             if verbose:
                 if epoch % verbose == 0:
                     end_epoch = default_timer() - start_epoch
@@ -146,23 +235,69 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.fitted = True
 
     def predict(self, X):
+        """Predict class labels
+
+        Parameters
+        ----------
+        X : 2d array
+        
+        Returns
+        -------
+        1d array of predicted labels of size n, where n is the number of 
+        data points 
+
+        """
         probs = self.predict_proba(X)
 
         return np.array([self.label[pred] for pred in np.argmax(probs, axis=1).astype(int)])
 
     def predict_proba(self, X):
+        """Predict probabilities for each class
+
+        Parameters
+        ----------
+        X : 2d array
+
+        Notes
+        -----
+        For all the data points, find the probabilities of belonging to all the k
+        classes
+
+        Returns
+        -------
+        2d array of probabilities of size n x k, where n is the number of 
+        data points and k the number of classes
+        """
         X = convert_to_var(X)
 
         return self.forward(X) # probs for classes
 
     def _parameters(self):
-        """ Returns all the parameters of the layers as a 1d np array"""
+        """Returns all the parameters of the layers as a 1d np array
+
+        Returns
+        -------
+        1d array of length n, where n is the number of parameters
+        """
         return np.hstack([layer.parameters() for layer in self.layers])
 
     def _total_parameters(self):
+        """Number of parameters
+
+        Returns
+        -------
+        int, the number of parameters the Neural Network has
+        """
         return len(self.parameters)
 
     def summary(self):
+        """Summary of the neural network
+
+        Returns
+        -------
+        str, summary of the network (name,weights,biases,layers,number of 
+        parameters)
+        """
         s = f"Name: {self.name}\n\n" 
         header = 'Layer\t\tWeight Dim\tBias Dim\tTotal Parameters\n'
         s += header
