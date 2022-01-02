@@ -1,16 +1,17 @@
-# Data structures
+import os 
+import sys
+
+sys.path.insert(0, '.') # make runable from src/
+
+# external libraries
 import pandas as pd
 import numpy as np
-
-# Splitting and transforming data
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 
 # For path referencing
 from config.definitions import ROOT_DIR
-import sys
-import os
 
 # Python's built in libs
 from collections import Counter
@@ -60,14 +61,6 @@ def run_preprocessing():
     print(f'There is in total {len(np.unique(train["type"]))} classes labeled as: {np.unique(train["type"])}')
     print(end='\n\n')
 
-    # Any missing values
-    print('-- Missing values ', end='-'*50 + '\n')
-    print('Training data')
-    print(train.isnull().sum())
-    print(end='\n\n')
-    print('Test data')
-    print(test.isnull().sum())
-    print(end='\n\n')
 
     # Split the data
     x_train, x_val, y_train, y_val = train_test_split(train.iloc[:, :-1],

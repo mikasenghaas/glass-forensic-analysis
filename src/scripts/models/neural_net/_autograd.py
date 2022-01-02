@@ -4,6 +4,25 @@ import numpy as np
 class Var:
     """
     A variable which holds a number and enables gradient computations.
+
+    Adapted from Rasmus Berg Palm `repository <https://github.com/rasmusbergpalm/nanograd>`_
+
+    Parameters
+    ----------
+    val : float or int
+        The actual value of the number.
+    parents : list, optional
+        List where each item has the following structure (:class:`Var`, gradient)
+    
+    Attributes
+    ----------
+    grad : float or int
+        Partial derivative of this variable with respect to the variable from which the bakcward method was called.
+    
+    Raises
+    ------
+    AssertionError
+        If the val is not float or int.
     """
 
     def __init__(self, val, parents=None):
@@ -20,6 +39,9 @@ class Var:
             parent.backprop(grad * bp)
 
     def backward(self):
+        """
+        Compute gradient of this Var with respect to all its parents.
+        """
         self.backprop(1.0)
 
     def __add__(self, other):
@@ -45,15 +67,37 @@ class Var:
         return self.v < other.v 
 
     def tanh(self):
+        """Peform Tanh activation function.
+
+        Tanh is defined as follows:
+
+        .. math::
+        
+            tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}} 
+        
+        """
         return Var(tanh(self.v), [(self, 1 - tanh(self.v) ** 2)])
 
     def relu(self):
+        """Peform Relu activation function.
+
+        Relu is defined as follows:
+
+        .. math::
+        
+            relu(x) = max(0, x)
+        
+        """
         return Var(self.v if self.v > 0.0 else 0.0, [(self, 1.0 if self.v > 0.0 else 0.0)])
 
     def log(self):
+        """Peform log function. (base 10)
+        """
         return Var(log10(self.v), [(self, 1 / self.v * log(10))]) 
 
     def exp(self):
+        """Peform exp function.
+        """
         return Var(exp(self.v), [(self, exp(self.v))])
 
     def __float__(self):
@@ -64,29 +108,3 @@ class Var:
 
     def __repr__(self):
         return f'{self.v}'
-        #return f"Var(v={self.v}, grad={self.grad})"
-
-
-if __name__ == '__main__':
-    import numpy as np
-
-    p = np.array([[Var(.8), Var(.2)], [Var(.2), Var(.8)]])
-    y = np.array([[Var(1), Var(0)], [Var(0), Var(1)]])
-
-    print(-np.sum(np.log(p) * y))
-
-    def ce(p, y):
-        print(p)
-        print(np.log(p))
-        return -np.sum(np.log(p) * y)
-
-    print(ce(p, y))
-
-    """
-    activation = np.vectorize(lambda x:x.relu())
-
-    x = np.array([[Var(5), Var(3)], [Var(2), Var(2)]])
-    y = np.array([Var(2), Var(2)])
-
-    print(activation(x @ y + Var(1)))
-    """

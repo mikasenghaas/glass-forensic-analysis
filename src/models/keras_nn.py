@@ -31,7 +31,7 @@ def predict(nn, X, label):
 
     return preds
 
-def main():
+def run_keras_nn():
     # ------ loading and preprocessing ------
 
     # load and split data
@@ -66,7 +66,7 @@ def main():
     print(nn.summary())
     
     #es_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', mode='min')
-    es = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
+    es = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
         
     # train model
     epochs = 500
@@ -131,4 +131,4 @@ def main():
                              classification_report = report)
 
 if __name__ == '__main__':
-    main()
+    run_keras_nn()

@@ -1,12 +1,13 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('.'))
 
 # external libraries
 import numpy as np
 import pandas as pd
 import graphviz
+import pydotplus
 from matplotlib import pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.preprocessing import StandardScaler, PolynomialFeatures
@@ -23,11 +24,11 @@ from scripts.utils import get_data, generate_summary
 
 # global configs
 np.random.seed(1)
-DO_PCA = True
+DO_PCA = False
 POLYNOMIAL_FEATURES = False
 SHOW = True
 
-def main():
+def run_sklearn_dt():
     # ------ loading and preprocessing ------
 
     # load and split data
@@ -49,24 +50,27 @@ def main():
 
     if DO_PCA:
         pipe = Pipeline(steps=[('scaler', scaler),
-                               ('pca', PCA()),
-                               ('decision_tree', DecisionTreeClassifier(splitter='best', max_features=None))])
+                               ('pca', pca),
+                               ('decision_tree', DecisionTreeClassifier(random_state=1))])
 
         # define hyper parameters to grid search
         params = {
                 'pca__n_components': list(range(1, X_train.shape[1]+1)),
                 'decision_tree__criterion': ['gini', 'entropy'],
                 'decision_tree__max_depth': list(range(1, 10)),
+                'decision_tree__splitter': ['best', 'random'] 
                 }
 
     else:
         pipe = Pipeline(steps=[('scaler', scaler),
-                               ('decision_tree', DecisionTreeClassifier(splitter='best', max_features=None, random_state=1))])
+                               ('decision_tree', DecisionTreeClassifier(random_state=1))])
 
         # define hyper parameters to grid search
         params = {
                 'decision_tree__criterion': ['gini', 'entropy'],
                 'decision_tree__max_depth': list(range(1, 10)),
+                'decision_tree__max_features': list(range(1, 10)),
+                'decision_tree__splitter': ['best', 'random'] 
                 }
 
 
@@ -81,15 +85,22 @@ def main():
     print('-'*5 + ' Best Hyperparameters ' + '-'*5)
     best_criterion = grid.best_estimator_.get_params()['decision_tree__criterion']
     best_max_depth = grid.best_estimator_.get_params()['decision_tree__max_depth']
+    best_splitter = grid.best_estimator_.get_params()['decision_tree__splitter']
     if DO_PCA:
         best_n_components = grid.best_estimator_.get_params()['pca__n_components']
+    else:
+        best_max_features = grid.best_estimator_.get_params()['decision_tree__max_features']
+
 
 
     if SHOW:
-        print('Best Criterion:', best_criterion)
-        print('Best Max Depth:', best_max_depth)
+        print('Best Criterion: ', best_criterion)
+        print('Best Max Depth: ', best_max_depth)
+        print('Best Splitter: ', best_splitter)
         if DO_PCA:
             print('Best PCA Components:', best_n_components)
+        else: 
+            print('Best Max Features:', best_max_features)
 
     # final model
     clf = grid.best_estimator_
@@ -121,6 +132,8 @@ def main():
             generate_summary(filepath = './data/results', name='sklearn_dt', 
                              best_criterion = best_criterion,
                              best_max_depth = best_max_depth,
+                             best_splitter = best_splitter,
+                             best_max_features = best_max_features,
                              training_accuracy = train_acc,
                              validation_accuracy = val_acc,
                              test_accuracy = test_acc,
@@ -145,9 +158,13 @@ def main():
         dot_data = export_graphviz(clf['decision_tree'], out_file=None,
                                    feature_names=FEATURE_NAMES,
                                    class_names=CLASS_NAMES,
-                                   filled=True)
+                                   filled=True,
+                                   rounded=True)
         graph = graphviz.Source(dot_data, format="png")
-
+        #pydot_graph = pydotplus.graph_from_dot_data(dot_data)
+        #pydot_graph.write_png('original_tree.png')
+        #pydot_graph.set_size('"1000,500!"')
+        # graph.set_size('"10,5!"')
 
         if SHOW:
             plt.show()
@@ -158,9 +175,10 @@ def main():
                 if DO_PCA:
                     FILENAME += '_pca'
 
+                #pydot_graph.write_png(f'{SAVEPATH}/{FILENAME}.png')
                 graph.render(f'{SAVEPATH}/{FILENAME}')
                 print('saved')
 
 
 if __name__ == '__main__':
-    main()
+    run_sklearn_dt()

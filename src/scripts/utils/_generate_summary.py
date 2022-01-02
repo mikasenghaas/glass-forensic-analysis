@@ -5,6 +5,16 @@ from tqdm import tqdm
 from datetime import datetime
 
 def generate_summary(**kwargs):
+
+    """
+    Generate summary for the given model. The summary is written to the specified ``filepath``.
+
+    Parameters
+    ----------
+    kwargs : dict-like object
+        Dict of parameters neeeded in order for summary to be built.
+    """
+
     for key, val in kwargs.items():
         if key == 'filepath': 
             filepath = val

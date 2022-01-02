@@ -1,7 +1,7 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('.'))
 
 # external libraries
 import numpy as np
@@ -23,7 +23,7 @@ np.random.seed(1)
 
 SHOW = True
 
-def main():
+def run_sklearn_random_forest():
     # ------ loading and preprocessing ------
 
     # load and split data
@@ -107,5 +107,5 @@ def main():
                              classification_report = report)
 
 if __name__ == '__main__':
-    main()
+    run_sklearn_random_forest()
 

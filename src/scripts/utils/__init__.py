@@ -1,3 +1,16 @@
+"""
+This module serves as a support for other modules.
+The following helper functions are defined:
+
+- :func:`check_consistent_length`
+- :func:`validate_feature_matrix`
+- :func:`validate_target_vector`
+- :func:`get_data`
+- :func:`generate_summary`
+- :func:`ModelNotFittedError`
+
+"""
+
 from ._validate import check_consistent_length
 from ._validate import validate_feature_matrix
 from ._validate import validate_target_vector

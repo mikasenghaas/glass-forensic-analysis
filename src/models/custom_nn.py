@@ -20,7 +20,7 @@ sns.set_style('darkgrid')
 np.random.seed(1)
 SHOW = True
 
-def main():
+def run_custom_nn():
     # ------ loading and preprocessing ------
 
     # load and split data
@@ -43,7 +43,7 @@ def main():
     """
     # define hyperparameters
     epochs = 100 
-    lr = 0.01
+    lr = 0.02
 
     # fit model
     nn.fit(X_train, y_train, num_batches=10, verbose=1, epochs=epochs, lr=lr)
@@ -92,4 +92,4 @@ def main():
                              classification_report = report)
 
 if __name__ == '__main__':
-    main()
+    run_custom_nn()

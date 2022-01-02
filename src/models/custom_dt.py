@@ -21,7 +21,7 @@ np.random.seed(1)
 DO_PCA = False
 SHOW = True
 
-def main():
+def run_custom_dt():
     # ------ loading and preprocessing ------
     X_train, X_test, y_train, y_test = get_data(raw=True, scaled=True)
 
@@ -32,7 +32,7 @@ def main():
     # ------ fitting model ------
 
     # initialise and train model
-    clf = DecisionTreeClassifier(criterion='gini', max_depth=6, max_features='max') # most generalising; can achieve 1.0 accuracy for depth >= 8
+    clf = DecisionTreeClassifier(criterion='entropy', max_depth=5, max_features=8) # most generalising; can achieve 1.0 accuracy for depth >= 8
     clf.fit(X_train, y_train)
 
     # ------ evaluate model ------
@@ -67,4 +67,4 @@ def main():
 
              
 if __name__ == '__main__':
-    main()
+    run_custom_dt()
