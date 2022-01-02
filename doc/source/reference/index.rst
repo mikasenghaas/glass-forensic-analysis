@@ -10,6 +10,7 @@ In this section, you can find full reference to the implemented methods and thei
 - :ref:`plotting-module`
 - :ref:`utils-module`
 - :ref:`decision-tree-module`
+- :ref:`neural-net-module`
 
 .. toctree::
    :maxdepth: 1
@@ -20,3 +21,4 @@ In this section, you can find full reference to the implemented methods and thei
    plotting
    utils
    dt
+   nn

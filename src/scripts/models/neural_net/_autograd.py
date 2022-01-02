@@ -5,7 +5,7 @@ class Var:
     """
     A variable which holds a number and enables gradient computations.
 
-    Adapted from Rasmus Berg Palm `repository <https://github.com/rasmusbergpalm/nanograd>`_
+    Adapted from Rasmus Berg Palm `repository <https://github.com/rasmusbergpalm/nanograd>`_.
 
     Parameters
     ----------
@@ -23,6 +23,7 @@ class Var:
     ------
     AssertionError
         If the val is not float or int.
+
     """
 
     def __init__(self, val, parents=None):
@@ -68,13 +69,6 @@ class Var:
 
     def tanh(self):
         """Peform Tanh activation function.
-
-        Tanh is defined as follows:
-
-        .. math::
-        
-            tanh(x) = \frac{e^{x} - e^{-x}}{e^{x} + e^{-x}} 
-        
         """
         return Var(tanh(self.v), [(self, 1 - tanh(self.v) ** 2)])
 
