@@ -4,3 +4,6 @@ __pycache__
 
 # custom 
 _testing.py
+
+# docs build
+doc/build

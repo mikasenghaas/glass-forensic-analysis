@@ -33,17 +33,6 @@ class DecisionTreeClassifier(BaseClassifier, DecisionTree):
     random_state : int, optional
         If using `random` alforithm, it is useful to specify this parameter
         in order to ensure reproducibility of results.
-    
-    Notes
-    -----
-
-    ``Parent classes``
-    This class inherits from two parent classes: BaseClassifier, DecisionTree.
-    - `BaseClassifier` adds attributes and methods which describe the inputted data
-    such as training data, number of features, classes etc.
-    - `DecisionTree` then adds three important methods: fit, predict, predict_proba.
-    These should allow client to train model and then use it for prediction.
-
     """
 
     def __init__(self,

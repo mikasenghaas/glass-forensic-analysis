@@ -7,7 +7,7 @@ class Node:
     given decision tree. See what is meant by information in the below description
     of attributes.
 
-    Attributes
+    Parameters
     ----------
     size : int, optional
         Number of samples which are part of this node.
@@ -20,7 +20,9 @@ class Node:
     
     _type : str, optional
         What type of node this node is - root, internal, leaf.
-    
+
+    Attributes
+    ----------    
     p : int
         Index of a feature within the given training dataset. Split of a node is
         made according to this feature.
@@ -96,6 +98,13 @@ class Node:
             raise Exception('Node can make only a decision on 1 or 2 dimensional arrays.')
 
     def is_leaf(self):
+
+        """Return if the given node is a leaf node or not.
+
+        Returns
+        -------
+        bool
+        """
         
         return self.type == 'leaf'
 

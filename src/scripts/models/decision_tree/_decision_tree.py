@@ -4,12 +4,38 @@ import numpy as np
 
 from ._node import Node
 from ...utils import validate_feature_matrix, validate_target_vector, check_consistent_length
-from ...metrics import binary_gini, gini, entropy
+from ...metrics import gini, entropy
 
 
 class DecisionTree:
 
-    """DecisionTree data structure which can be used for Classification or Regression.
+    """DecisionTree data structure which can be utilized for Classification or Regression.
+
+    This class serves as a core data structure for implementing decision tree algorithm.
+    Its main functionality is to build the tree and then allow to traverse it in order
+    to make predictions.
+
+    Parameters  
+    ----------
+    criterion : str, optional
+        How to calculate impurity of nodes.
+    
+    algorithm : str, optional
+        How to approach building process of the tree.
+    
+    max_depth : int, optional
+        Maximum depth of the tree.
+
+    max_features : int or float or str, optional
+        How many features to consider during each split of the node.
+    
+    min_samples_split : int, optional
+        Minimum samples required to be present within the node in order
+        to be able to further split it.
+    
+    random_state : int, optional
+        If using `random` alforithm, it is useful to specify this parameter
+        in order to ensure reproducibility of results.
 
     Attributes
     ----------
@@ -21,11 +47,6 @@ class DecisionTree:
     
     num_leaf_nodes : int
         Number of leaf nodes that this tree has.
-
-    Notes
-    -----
-    For description of input parameters, refer to the :class:`DecisionTreeClassifier`.
-
     """
 
     def __init__(
@@ -60,14 +81,13 @@ class DecisionTree:
         Notes
         -----
         The neccessary processes are:
+
         - Assignment of relevant criterion function
         """
 
         # Assignment of relevant criterion function
         if self.criterion == 'gini':
             self.criterion = gini
-        elif self.criterion == 'binary_gini':
-            self.criterion = binary_gini
         elif self.criterion == 'entropy':
             self.criterion = entropy
         else: 
@@ -87,12 +107,17 @@ class DecisionTree:
         Notes
         -----
         The following things are done:
-        - Validation of input tensors X and y - X must be 2 dimensional.
-        If it is 1 dimensional, transformation to 2D is attempted. y must be 1 dimensional.
+
+        - Validation of input tensors X and y - X must be 2 dimensional. If it is 1 dimensional, transformation to 2D is attempted. y must be 1 dimensional.
+
         - X and y must have identical first dimension
+
         - Parse number of training records `n`, size of feature space `p` and # of `unique` classes `k`
+
         - Map provided unique classes to internal normalized format, i.e., 0, 1, 2, ...
+
         - Determination of max features variable
+
         """
 
         self.X = validate_feature_matrix(X)
@@ -227,6 +252,9 @@ class DecisionTree:
     def _best_split(self, X, y):
 
         """Find best split from given feature space.
+
+        This methods finds best split from given feature space
+        using given criterion (e.g. gini).
 
         Parameters
         ----------
@@ -396,11 +424,14 @@ class DecisionTree:
         """Split provided node.
 
         High level overview of algorithm (see further explanation in Notes):
-        1. Compute optimal split for the given :class:`Node`.
-        2. Compute info about two child nodes which is needed to initiliaze them
-        3. Initialize child nodes and for each
-         3A. IF ALLOWED split it further
-         3B. ELSE Make it leaf node
+
+        #. Compute optimal split for the given :class:`Node`.
+        #. Compute info about two child nodes which is needed to initiliaze them
+        #. Initialize child nodes and for each
+
+          #. IF ALLOWED split it further
+          #. ELSE Make it leaf node
+        
         Repeat the same process `recursively`.
 
         Parameters
@@ -411,21 +442,39 @@ class DecisionTree:
         Notes
         -----
 
-        `Finding optimal split`
-        To be added.
+        **STEP 1.** In order to find optimal split of the node, the following
+        pseudo algorithm is used:
 
-        `Get info about child nodes`
+        #. Define proper feature space, i.e. features to be considered for the split. This is determined based on the parameter ``self.max_features``.
+
+        #. For each feature within the proper feature space:
+
+           #. Sort its values and make sure they are all unique
+           #. For each pair of neighboring values, compute the split
+           #. For this split compute the **total score** - weighted average of given ``criterion``
+           #. Return the best split based on the total score
+        
+        #. From the best splits for each feature, choose the overall best split and return it
+
+        **STEP 2.** Following steps are done:
+
         - Get boolean array which represents the split of data - True = left node, False = right node
         - Get indices of samples which should belong to left and right child nodes respectively
 
-        `Do the split`
-        There are two possible scenario for the node in question: split it further, make it leaf node
-        Split it further if:
+        
+        **STEP 3.** There are two possible scenario for the node in question:
+        
+        #. split it further
+        #. make it leaf node
+
+        Split it further if the node:
+
         - is NOT pure (i.e. does not contain just one type of class)
         - its depth is not equal to maximum depth specified
         - Contains more samples than the specified minimum
-        - Has more than unique sample
-        Otherwise, turn it into leaf node.
+        - Has more than 1 unique sample
+
+        Otherwise, turn it into a leaf node.
 
         """
 
