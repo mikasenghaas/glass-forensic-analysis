@@ -65,15 +65,7 @@ Reproduce the results in the few following steps:
    pip install -r requirements.txt
    ```
 
-4. You are all set. Run main.py from the `src/` folder (NOTE: Path errors may occur if script is not run from 
-   the `src` folder) run the entire project.
-
-   ```
-   cd src
-   python main.py
-   ```
-
-5. **Graphviz Dependency**
+4. **Graphviz Dependency**
 
    The visualisation of the decision tree is based on the package `graphviz`. It is listed inside the `requirements.txt` and thus
    installed when initialising the virtual environment. However, for the package to run properly, it must be installed system-wide.
@@ -82,6 +74,15 @@ Reproduce the results in the few following steps:
    ```
    brew install graphviz
    ```
+
+5. You are all set. Run main.py from the `src/` folder (NOTE: Path errors may occur if script is not run from 
+   the `src` folder) run the entire project.
+
+   ```
+   cd src
+   python main.py
+   ```
+
 
 ## Documentation 
 
