@@ -14,14 +14,14 @@ all eda on the entire dataset (merge train and test before)
 
 
 ## Preprocessing 
-- [ ] feature selection through PCA 
-- [ ] scaling features (maybe using different scaling techniques)
-- [ ] generate new features (through kernels in svm) or manually through PolynomialFeatures()
+- [x] feature selection through PCA 
+- [x] scaling features (maybe using different scaling techniques)
+- [x] generate new features (through kernels in svm) or manually through PolynomialFeatures()
 
 ## Implementation of Models
 
-- [ ] transfer plotting function from `eduml` to this project (and use to plot decision boundaries)
-- [ ] define custom errors, sa. ModelNotFittedError
+- [x] transfer plotting function from `eduml` to this project (and use to plot decision boundaries)
+- [x] define custom errors, sa. ModelNotFittedError
 - [ ] more checkers and validators to ensure data integrity and useful error messages
 
 ### Make Base Model Classifier
@@ -49,7 +49,7 @@ all eda on the entire dataset (merge train and test before)
 - [x] check correctness of other loss-functions (mse and cross-entropy currently not working)
 - [x] implement one-hot-encoding in helpers (to not be dependent on sklearn's implementation)
 - [x] generate more test cases to check performance (correctness and speed of implementation)
-- [ ] improvement training speed of model
+- [ ] improve training speed of model
 - [ ] take validation split as input on call to fit() and adjust training based on val loss as well (?)
 
 ### Plotting
@@ -58,46 +58,43 @@ all eda on the entire dataset (merge train and test before)
 - [ ] make generic function to plot training/ loss history 
 
 ### Evaluate Correctness
-- [ ] DT:plot decision boundaries for generic 2d-feature classification task using classification 
+- [x] DT:plot decision boundaries for generic 2d-feature classification task using classification 
       results from own implementation and sklearn implementation
-- [ ] NN: choose more difficult classification task and assess whether we can reach similar performance
+- [x] NN: choose more difficult classification task and assess whether we can reach similar performance
       with our custom implementation 
  
 ## Training and Evaluation Pipeline
-- [ ] make function that incoroporates the entire ml-training pipeline + gridsearch cv for hyper
-      parameter tuning (utils)
-
 ```
 def train_and_evaluate(model : mlmodel, params : dict, score: 'macro_recall'):
     # make pipeline
     # return best score, best model, best params
 ```
 
-- [ ] report final performance from returned best model on test set
+- [x] report final performance from returned best model on test set
 - [ ] build and export final model as trained from entire dataset using best test-performance with best
       selected features
 
 ## General
 
-- [ ] Move loading of data, normalising and splitting into utils package
-- [ ] create function to create neural net model
-- [ ] create separate scripts for training and evaluating the different models:
+- [x] Move loading of data, normalising and splitting into utils package
+- [x] create function to create neural net model
+- [x] create separate scripts for training and evaluating the different models:
   - [x] custom nn
-  - [ ] custom dt
-  - [ ] sklearn dt
+  - [x] custom dt
+  - [x] sklearn dt
   - [x] keras nn
-  - [ ] sklearn ensemble
+  - [x] sklearn ensemble
 
 
 # REPORT
-- [ ] correct text for using passive voice
-- [ ] dont use we
-- [ ] correct correctness plots to 3x3 plots (retrain with better neural nets)
-- [ ] fix all figures, tables to have a label so that we can reference them in text
-- [ ] add more references
-- [ ] adjust styling
+- [x] correct text for using passive voice
+- [x] dont use we
+- [x] correct correctness plots to 3x3 plots (retrain with better neural nets)
+- [x] fix all figures, tables to have a label so that we can reference them in text
+- [x] add more references
+- [x] adjust styling
 - [ ] run entire text through grammarly
-- [ ] training history plots of nn have a cutoff x label
+- [x] training history plots of nn have a cutoff x label
 - [ ] dt visualiation comes from sklearn implmeentation -> not ours yet (also: should we use pca here, normal features are easier to interpret, also from the eda)
-
-
+- [ ] add stopping criterion in dt implementation decription
+- [ ] limitations? why no oversampling or feature engineering
