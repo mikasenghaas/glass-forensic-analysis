@@ -46,7 +46,7 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         return X
 
-    def fit(self, X, y, batch_size=1, epochs=1000, lr = 0.01, save_at=None, verbose=0):
+    def fit(self, X, y, num_batches=1, epochs=1000, lr = 0.01, save_at=None, verbose=0):
         self.X = validate_feature_matrix(X)
         self.X = convert_to_var(self.X)
         self.y = y 
@@ -67,10 +67,10 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.y_hot = convert_to_var(y_hot)
 
         # compute batch size
-        if isinstance(batch_size, float):
-            batch_size = int(X.shape[0] * batch_size)
-        elif isinstance(batch_size, int):
-            batch_size = batch_size
+        if isinstance(num_batches, float):
+            num_batches = int(X.shape[0] * num_batches)
+        elif isinstance(num_batches, int):
+            num_batches = num_batches
         else:
             assert False, 'wrong type for batch size'
 
@@ -83,20 +83,20 @@ class NeuralNetworkClassifier(BaseClassifier):
         self.loss_history = []
         self.accuracy_history = []
         self.saves = []
+        idx = np.arange(self.n)
         for epoch in range(epochs):
             start_epoch = default_timer()
             
-            idx = np.arange(self.n)
             np.random.shuffle(idx) 
-            batch_idxs = np.array_split(idx, batch_size)
+            batch_idxs = np.array_split(idx, num_batches)
 
             for batch_idx in batch_idxs:
                 X_batch = self.X[batch_idx]
                 y_batch = self.y_hot[batch_idx]
 
                 """
-                if batch_size < self.n :
-                    batch_idxs = np.random.choice(list(range(self.n)), batch_size, replace=False) 
+                if num_batches < self.n :
+                    batch_idxs = np.random.choice(list(range(self.n)), num_batches, replace=False) 
                     X_batch = self.X[batch_idxs]
                     y_batch = self.y_hot[batch_idxs]
                 else: 
@@ -105,7 +105,7 @@ class NeuralNetworkClassifier(BaseClassifier):
                 """
 
                 # get the probabilities for each datapoint of belonging to each class
-                probs = self.forward(X_batch) # batch_size_n x k matrix of probs for each data point for each class 
+                probs = self.forward(X_batch) # num_batches_n x k matrix of probs for each data point for each class 
 
                 # compute loss on one-hot encoded target matrix
                 assert not np.any(probs < Var(0.0)), 'probs must be > 0, due to softmax'
@@ -139,7 +139,7 @@ class NeuralNetworkClassifier(BaseClassifier):
             if verbose:
                 if epoch % verbose == 0:
                     end_epoch = default_timer() - start_epoch
-                    print(f'> Epoch: {epoch} - Batch: {batch_size} - Time: {round(end_epoch, 2)}s - '\
+                    print(f'> Epoch: {epoch} - #Batches: {num_batches} - Time: {round(end_epoch, 2)}s - '\
                             f'Loss: {loss.v} - Training Accuracy: {round(training_accuracy, 2)}')
 
 
