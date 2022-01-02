@@ -1,36 +1,56 @@
-print()
-print('-- Load modules and set path ---------------------------------------------------')
+print('\nLoading project with all dependencies and setting PYTHONPATH...\n')
 
-# Path setup
+# path setup
 import sys
 import os
+import warnings 
+
 sys.path.insert(0, os.path.abspath(''))
+warnings.filterwarnings("ignore")
 
-# Own scripts
+# own scripts
 from scripts.utils import generate_summary
-from preprocess import run_preprocessing
+from preprocess import run_preprocessing, run_check_data
 from eda import run_eda
+from evaluate import run_evaluation
+from models import run_custom_dt, run_custom_nn, run_sklearn_dt, run_sklearn_random_forest, run_keras_nn
 
-# Flags
-RUN_PREPROCESSING = True
-RUN_EDA = True
-RUN_EVALUATE = False
-print('Success!', end='\n\n')
+# helper
+def guided_run(f, section_desc):
+    while True:
+        ans = input(f'Do you wish to {section_desc}? (y/n) ')
+        if ans == 'y':
+            print()
+            f() 
+            print("\nSuccessfully run.\n")
+            break
+        elif ans == 'n':
+            print("Didn't run.\n")
+            break
+        else:
+            print("Invalid input. Try again.")
 
 def main():
+    # -- check data quality -----------------------------------------------
+    guided_run(run_check_data, 'check the quality of the data')
     
-    print('-- Inspect, clean, transform -----------------------------------------------')
-    run_preprocessing() if RUN_PREPROCESSING else None
-    print('Success!', end='\n\n')
+    # -- data preprocessing -----------------------------------------------
+    guided_run(run_preprocessing, 'preprocess the data')
 
-    print('-- EDA ---------------------------------------------------------------------')
-    run_eda() if RUN_EDA else None
-    print('Success!', end='\n\n')
+    # -- eda -----------------------------------------------
+    guided_run(run_eda, 'run the EDA')
 
-    print('-- Evaluate ----------------------------------------------------------------')
-    generate_summary() if RUN_EVALUATE else None
-    print('Success!', end='\n\n')
+    # -- assess correctness -----------------------------------------------
+    guided_run(run_evaluation, 'assess the correctness of the custom implementations.')
 
+    # -- build and evaluate models -----------------------------------------------
+    guided_run(run_custom_dt, 'train the custom decision tree classifier on the data')
+    guided_run(run_sklearn_dt, 'train the sklearn decision tree classifier on the data')
+    guided_run(run_custom_nn, 'train the custom neural net on the data')
+    guided_run(run_keras_nn, 'train the keras neural net on the data')
+    guided_run(run_sklearn_random_forest, 'train the sklearn random forest on the data')
+
+    print('Whole Project Pipeline done.')
 
 if __name__ == '__main__':
     main()
