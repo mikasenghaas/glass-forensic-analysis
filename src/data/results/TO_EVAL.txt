@@ -1,7 +1,0 @@
-custom_dt
-custom_nn
-sklearn_dt
-sklearn_svm
-sklearn_knn
-sklearn_random_forest
-keras_nn

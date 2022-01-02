@@ -19,21 +19,24 @@ from scripts.plotting import plot_2d_decision_regions
 sns.set_style('darkgrid')
 
 # global configs
-np.random.seed(1)
+np.random.seed(2)
 SAVE = True
 SHOW = True
-SAVEPATH = './data/figures'
 
 def main():
     # ------ loading and preprocessing data ------
     iris_X, iris_y = load_iris(return_X_y=True)
     iris_X = iris_X[:, :2]
 
+    uniq_idx = np.unique(iris_X, return_index=True, axis=0)[1]
+    iris_X = iris_X[uniq_idx]
+    iris_y = iris_y[uniq_idx]
+
     X_train, X_test, y_train, y_test = train_test_split(iris_X, iris_y, test_size=.3)
 
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(8, 4))
 
-    depths = list(range(1, 16))
+    depths = list(range(1, 21))
     train_acc = []
     test_acc = []
     for d in depths:
@@ -47,6 +50,7 @@ def main():
 
     sns.lineplot(depths, train_acc, ax=ax, color='blue', label='Training Accuracy')
     sns.lineplot(depths, test_acc, ax=ax, color='red', label='Test Accuracy')
+    ax.set_xticks(depths)
     ax.set_title('Training Accuracy on different depths of the tree')
     ax.set_xlabel('Max Depth of Tree')
     ax.legend(loc='best')
@@ -54,9 +58,10 @@ def main():
     if SHOW:
         plt.show()
 
-    if SAVE:
-        fig.savefig(f'{SAVEPATH}/dt_correctness2.pdf')
-        print(f'Saved PDF to {SAVEPATH}')
+        if input('SAVE? (y/n): ') == 'y':
+            SAVEPATH = './data/figures'
+            fig.savefig(f'{SAVEPATH}/assert_dt_overfit.pdf')
+            print(f'Saved PDF to {SAVEPATH}/assert_dt_overfit.pdf')
 
 if __name__ == '__main__':
     main()
