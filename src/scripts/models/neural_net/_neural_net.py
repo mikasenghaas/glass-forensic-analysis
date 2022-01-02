@@ -169,10 +169,6 @@ class NeuralNetworkClassifier(BaseClassifier):
         else:
             assert False, 'wrong type for batch size'
 
-        if not save_at is None:
-            assert isinstance(save_at, list), 'save_at must be of type list'
-            assert all(save_at) <= epochs and all(save_at) > 0, 'all values in save_at must be at most epochs and greater 0'
-            save_at = set(save_at)
 
         # training loop
         self.loss_history = []
