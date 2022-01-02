@@ -26,35 +26,35 @@ def main():
     # ------ loading and preprocessing data ------
     iris_X, iris_y = load_iris(return_X_y=True)
     iris_X = iris_X[:, :2]
-    moons_X, moons_y = make_moons(random_state=1)
+    #moons_X, moons_y = make_moons(random_state=1)
     circles_X, circles_y = make_circles(random_state=1)
 
     scaler = StandardScaler()  
     iris_X = scaler.fit_transform(iris_X)
-    moons_X = scaler.fit_transform(moons_X)
+    #moons_X = scaler.fit_transform(moons_X)
     circles_X = scaler.fit_transform(circles_X)
 
     data = {'iris': [iris_X, iris_y],
-            'moons': [moons_X, moons_y],
+            #'moons': [moons_X, moons_y],
             'circles': [circles_X, circles_y]}
 
     # ----- plotting --------
-    epochs = [10, 50, 100]
+    all_epochs = [[1, 5, 50], [50, 100, 200]]
 
     print('starting training')
-    fig, axes = plt.subplots(nrows = len(data), ncols = len(epochs), figsize = (5*len(epochs), 5*len(data)))
-    for i, info in enumerate(zip(data.keys(), [3, 2, 2])):
-        dataset, k = info
+    fig, axes = plt.subplots(nrows = len(data), ncols = len(all_epochs[0]), figsize = (5*len(all_epochs[0]), 5*len(data)))
+    for i, info in enumerate(zip(data.keys(), [3, 2], all_epochs)):
+        dataset, k, epochs = info
         X, y = data[dataset]
         for j in range(len(epochs)):
             clf = NeuralNetworkClassifier(
-                    layers = [DenseLayer(n_in=2, n_out=30, activation='relu', name='fc1'),
-                              DenseLayer(n_in=30, n_out=k, activation='softmax', name='output')],
+                    layers = [DenseLayer(n_in=2, n_out=20, activation='relu', name='fc1'),
+                              DenseLayer(n_in=20, n_out=k, activation='softmax', name='output')],
                     loss='cross_entropy', 
                     name=f'Simple NN'
                     )
 
-            clf.fit(X, y, epochs=epochs[j], lr=0.1, num_batches=5, verbose=1)
+            clf.fit(X, y, epochs=epochs[j], lr=0.01, num_batches=10, verbose=1)
             plot_2d_decision_regions(X, y, clf, ax=axes[i][j], title=f'NN (Epochs: {epochs[j]})')
 
             if j == 0:

@@ -28,11 +28,11 @@ def main():
     # ------ loading and preprocessing data ------
     iris_X, iris_y = load_iris(return_X_y=True)
     iris_X = iris_X[:, :2]
-    moons_X, moons_y = make_moons(random_state=1)
+    #moons_X, moons_y = make_moons(random_state=1)
     circles_X, circles_y = make_circles(random_state=1)
 
     data = {'iris': [iris_X, iris_y],
-            'moons': [moons_X, moons_y],
+            #'moons': [moons_X, moons_y],
             'circles': [circles_X, circles_y]}
 
     # ------ constructing models ------
