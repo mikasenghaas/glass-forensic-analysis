@@ -1,0 +1,52 @@
+\section{Interpretation and Discussion of the Results}
+%In this section, first the challenges of the given problem are summarized and an ideal model to solve the problem is defined. Second, all properties of the ideal model are discussed with the relation to selected models and their performance. Last but not the least, conclusion is made on which of the three models is the best for classification of glass fragments.
+
+\subsection{Classification Challenges and the Ideal Classifier}
+Building a good model to accurately predict glass fragments from a data set of $214$ data points turned out to be demanding. The core challenges were:
+
+%\vspace{10pt}
+\begin{enumerate}
+    \item Little amount of data for 6-class classification problem
+    \item Skewed class distribution 
+    \item Class overlap
+\end{enumerate}
+%\vspace{10pt}
+
+In the light of the model being used in criminal investigation processes, an ideal model would be transparent in a way that the decision-making is comprehensible for humans. Furthermore, the model should be well-suited to tackle the challenges mentioned.
+
+
+%Before a discussion of particular models, it is important to highlight the main challenges of the given classification problem and based on it define ideal model. First, certain classes of glass, such as $1$, $2$ and $3$, had a large overlap given its similar features. This implies a need for a complex model capable of handling such overlap and still being able to generalize well. Second, distribution of classes within the training and test split of data was skewed. Thus, minority classes might be very hard to predict. This goes hand in hand with the size of the training data-set which was only 149 records. Therefore, optimal model should be able to learn even from a small training data-set. Last but not the least, since the output of the model might be used as part of crime analysis, ideal model should be also interpretable, i.e. it should be clear how it decides.
+
+\subsection{Comparison of Model Performances}
+The three models evaluated within this project can be ranked by their performance (measured by the expected out-of-sample accuracy) as follows:
+
+\begin{enumerate}
+    \item \class{RandomForestClassifier()}
+    \item \class{NeuralNetworkClassifier()}
+    \item \class{DecisionTreeClassifier()}
+\end{enumerate}
+
+Looking at the individual classification reports, all models were able to almost perfectly predict class $7$ which goes hand in hand with the findings from the EDA and Figure \ref{pca}. In contrast, the prediction of the overlapping classes 1, 2 and 3 turned out to be generally challenging. In order to classify these classes correctly, the model needed to establish a complex decision boundary, that at the same time generalises well. The \class{RandomForestClassifier()} did the best job at separating the classes 1 and 2 from each other (Table \ref{random_forest_evaluation}), giving one indication of its overall good performance. The \class{DecisionTreeClassifier()} struggled the most at separating the overlapping classes (Table \ref{dt_evaluation}). 
+Another noticeable, common pattern from the classification reports is that the minority classes were generally more difficult to predict. That is reasonable, since a lack of training examples makes it difficult to learn class-specific properties.
+
+\subsection{Interpretation of Model Performances}
+The \class{RandomForestClassifier()}, being an ensemble of a large number of, uncorrelated decision trees, as well as the \class{NeuralNetworkClassifier()} are complex models, with longer training times, but more accurate predictions. This explains, why both models outperform the simpler \class{DecisionTreeClassifier()}. 
+The fact that the \class{RandomForestClassifier()} gives better results than the \class{NeuralNetworkClassifier()} is probably due to the fact that neural networks usually need larger amounts of training data to give good results. In fact, neural networks perform best on complex classification problems with large amount of data to learn from. Since this classification problem is quite the opposite of that, the neural network is not performing as well as the \class{RandomForestClassifier()}.
+
+%- 1. difference between high performant, but slow/ less performant, but fast
+%- 2. neural net not as good, because usually needs more data points
+
+%- 3. however, when choosing a model, dt might stil be intersting, since transparent model (main advantage not only speed, but also interpretability)
+
+\begin{comment}
+First, all models were able to almost perfectly predict class $7$ which goes hand in hand with the findings from EDA and figure $2$ where even using only first two principal components, it was possible to see the clear separation of class $7$ from others. Second, more challenging proved to be a prediction of classes $1$ and $2$. In order to classify them correctly, the model needed to establish complex decision boundary. From this perspective, it was expected that \class{DecisionTreeClassifier()} will perform the worst as it can only divide feature space with straight boundaries. This expectation was wrong as \class{NeuralNetwork()} (both implementations) had similar results. One possible explanation is that \class{NeuralNetwork()} got stuck in a local minimum during training and even advanced optimizer (Adam) did not help to overcome this. More interestingly, \class{RandomForestClassifier()} performed way better than the other two models. Its core advantage is concealed in its ability to rely on a majority vote of a large and diverse set of \class{DecisionTreeClassifier()} trained only on a subsample of original data. Thanks to this diversity, it is capable of fitting complex patterns but even more importantly generalize well. In other words, it is less likely to make an error due to small variation in data.
+
+\subsection{Learning from a small data set}
+In the given data-set, there were three minor classes, namely $3$, $5$ and $6$. From EDA (Figure 3), it was clear that it will be very hard to classify them correctly as they all overlapped with the other majority classes. This proved to be a problem especially for \class{DecisionTreeClassifier()}. A good explanation can be found from its visualization and following the splits of class 3 for example. In majority of cases (3 out of 5), it ends being in a leaf node either with class 1 or 2 with which it has a large overlap. Further, the nodes are almost pure, thus the model has no further incentive to split it. In addition, since these classes have more records, they are also more likely to be predicted. Finally, compare to other two methods, \class{NeuralNetwork()} is parametric and given the chosen architecture, it has a large number of parameters to be tuned. Therefore, it also needs a larger training data-set in order for it to work well. This might be a possible explanation why it outperformed by \class{RandomForestClassifier()} for prediction of classes $1$ and $2$.
+
+%\subsection{Interpretability}
+%\class{DecisionTreeClassifier()}'s core advantage compare to the other two models is that its decision can be simply translated into just if-else statements. For example, can see that within its first two levels (root is level 1), it only uses first or second principal component to decide. This in fact makes sense as the first two components explain most of the variability of the given features and thus it is a good way to separate the classes. On the opposite site, trying to understand how a \class{RandomForestClassifier()} decided is way more difficult and infeasible as it would require to go through all the 100 trees.
+\end{comment}
+
+\subsection{Conclusion}
+The analysis has shown that a model chosen solely on the basis of best performance (\class{RandomForestClassifier()}) has an expected out-of-sample performance of over 80\%, which is a solid result given the challenges of the problem at hand. However, in the light of the model being used in assisting criminal investigations, transparency in the way decision are being made might be relevant, i.e. in court trials. Thus, if interpretability of the model is a core requirement for the final model, a  \class{DecisionTreeClassifier()} should be considered.

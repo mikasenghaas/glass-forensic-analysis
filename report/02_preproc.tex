@@ -1,0 +1,48 @@
+\section{Data Description and Preprocessing}
+\subsection{Fundamental Data Description}
+
+The data used within this project was obtained from a study carried out as part of a research program for the \textit{UK Forensic Science Service} \cite{ForensicScienceInduction}. The data set contained a total of $214$ glass fragments that were obtained in a pre-split of $149$ training and $65$ test samples. For each glass fragment, a total of nine features were recorded, including a measure of the refractive index (RI), which describes how fast light travels through a material. It is a standard measure in glass analysis as it varies significantly for different types of glass. The remaining eight measured features described the chemical composition of the glass fragment in percent. Table \ref{features} lists all measured features.
+\newline
+
+\begin{table}[!ht]
+  \footnotesize
+  \centering
+\begin{tabular}{ c c c c c c c c c }
+ \toprule
+ \textbf{RI} & \textbf{Na} & \textbf{Mg} & \textbf{Al} & \textbf{Si} & \textbf{K} & \textbf{Ca} & \textbf{Ba} & \textbf{Fe} \\ 
+ \midrule 
+ Refractive Index & Sodium & Magnesium & Aluminium & Silicon & Potassium & Calcium & Barium & Iron \\ 
+ \bottomrule
+\end{tabular}
+\captionsetup{justification=centering,margin=2cm}
+\caption{Observed Features for Glass Fragments}
+\label{features}
+\end{table}
+
+Each glass fragment in the data set belonged to one of six classes. In the data the classes were integer-encoded and mapped to the respective glass types depicted in Table \ref{classes}.
+\newline
+
+\begin{table}[!ht]
+  \footnotesize
+  \centering
+\begin{tabular}{ c c }
+ \toprule
+ Integer Code & Glass Type \\
+ \midrule 
+ 1 & Window from building (float processed) \\
+ 2 & Window from building (non-float processed) \\ 
+ 3 & Window from vehicle \\
+ 5 & Container \\
+ 6 & Tableware \\
+ 7 & Headlamp \\
+ \bottomrule
+\end{tabular}
+\captionsetup{justification=centering,margin=2cm}
+\caption{Glass Types and their Encoding}
+\label{classes}
+\end{table}
+
+\subsection{Data Cleaning}
+All data integrity checks carried out, such as checking for missing values, checking for the ranges of each feature, and adding up the percentages in the chemical composition in all glass fragments, did not report any major inconsistencies. Thus, no further data cleaning was necessary.
+
+% To get reproducible results, the training data was further divided into a training and validation split, that were used in the training of all models. Furthermore, all splits were normalised using a standard normalisation, meaning that each feature was transformed such that it had a zero mean and unit variance. This was crucial for ensuring that each feature contributed to the PCA analysis independently of its scale and the gradient descent training algorithm in the neural network to work properly.

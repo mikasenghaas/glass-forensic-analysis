@@ -1,0 +1,98 @@
+\usepackage{graphicx} %images
+\usepackage{float} %floats
+\usepackage[
+backend=biber,
+style=numeric,
+sorting=none,
+url=false,
+maxbibnames=4,
+minbibnames=3
+]{biblatex}
+\addbibresource{references.bib}
+\DefineBibliographyStrings{english}{%
+  bibliography = {References},        %call bib 'References" instead of Bibliography
+}
+\usepackage{amsmath} %maths
+\usepackage{pdfpages} %include pdfs
+\usepackage{gensymb} %make math symbols
+\usepackage{comment} %enables commenting out a block of text
+\usepackage{caption}
+\usepackage{tabularx} %expanded tables
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{booktabs}%centered tables
+\usepackage{subcaption} %side by side images
+\usepackage{url} %copy paste urls
+\usepackage[version=3]{mhchem} %does chem
+\usepackage{array}
+\usepackage{indentfirst} %indentsfirst
+\usepackage{setspace}
+\usepackage{csquotes} %quotes
+\usepackage{listings} %make pretty code
+\usepackage{nicefrac} %pretty fractions
+\usepackage{subfiles} %multi-file doc
+\usepackage{multirow} %stuff for tables
+\usepackage{wrapfig} %text around figures
+\usepackage{changepage} %locally adjust page size
+\usepackage{float}
+\usepackage{stackengine} %give figures 0 width
+\usepackage{dcolumn} %order columns by order of magnitude
+\usepackage[numbered,framed]{matlab-prettifier}
+\usepackage[super]{nth} %use /nth{number} to get nicely looking ordinals
+\usepackage{amssymb} %add tilde in math-mode with \sim
+\usepackage{algorithm} %for pseudocode
+\usepackage{algorithmicx}% for pseudocode
+\usepackage{subcaption} %for subcaptions
+\usepackage{algpseudocode}% for pseudocode
+\algdef{SE}[DOWHILE]{Do}{doWhile}{\algorithmicdo}[1]{\algorithmicwhile\ #1}
+
+\usepackage{xcolor}
+\usepackage{xparse}
+
+\NewDocumentCommand{\class}{v}{%
+\texttt{\textcolor{blue}{#1}}%
+}
+
+\NewDocumentCommand{\code}{v}{%
+\texttt{\textcolor{black}{#1}}%
+}
+
+\lstset{language=Python,keywordstyle={\bfseries \color{blue}}}
+
+\lstset{
+  style              = Matlab-editor,
+  basicstyle         = \mlttfamily,
+  escapechar         = ",
+  mlshowsectionrules = true,
+}
+\newcolumntype{d}[1]{D{.}{.}{#1}} %creates new column for tables called d that orders numbers by magnitude. Look up documentation for more info
+\setlength{\parindent}{1cm} %sets indents to 0
+\usepackage{parskip} %add space between paragraphs
+\setlength{\parskip}{3pt} %make paragraph space a certain size
+\linespread{1.25} %change line spacing
+
+% Code styling
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{simple_style}{
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegreen},
+  rulecolor=\color{backcolour},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2
+}
+\lstset{style=simple_style}
