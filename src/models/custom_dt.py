@@ -57,10 +57,7 @@ def run_custom_dt():
 
         if input('SAVE? (y/n)' ) == 'y':
             generate_summary(filepath = './data/results', name='custom_dt', 
-                 best_criterion = best_criterion,
-                 best_max_depth = best_max_depth,
                  training_accuracy = train_acc,
-                 validation_accuracy = val_acc,
                  test_accuracy = test_acc,
                  confusion_matrix = conf_matrix,
                  classification_report = report)
