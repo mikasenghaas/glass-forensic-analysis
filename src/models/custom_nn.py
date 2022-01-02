@@ -43,7 +43,7 @@ def main():
     """
     # define hyperparameters
     epochs = 100 
-    lr = 0.01
+    lr = 0.02
 
     # fit model
     nn.fit(X_train, y_train, num_batches=10, verbose=1, epochs=epochs, lr=lr)

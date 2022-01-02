@@ -66,7 +66,7 @@ def main():
     print(nn.summary())
     
     #es_stopping = keras.callbacks.EarlyStopping(monitor='val_loss', mode='min')
-    es = EarlyStopping(monitor='val_loss', patience=10, verbose=1)
+    es = EarlyStopping(monitor='val_loss', patience=2, verbose=1)
         
     # train model
     epochs = 500
