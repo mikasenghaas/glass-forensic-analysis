@@ -65,11 +65,28 @@ Reproduce the results in the few following steps:
    pip install -r requirements.txt
    ```
 
-4. You are all set. Run main.py in the `src/` folder and run the entire project.
+4. **Graphviz Dependency**
+
+   The visualisation of the decision tree is based on the package `graphviz`. It is listed inside the `requirements.txt` and thus
+   installed when initialising the virtual environment. However, for the package to run properly, it must be installed system-wide.
+   To do so, run the following command on macOS:
+
+   ```
+   brew install graphviz
+   ```
+
+5. You are all set. Run main.py from the `src/` folder (NOTE: Path errors may occur if script is not run from 
+   the `src` folder) run the entire project.
+
+   ```
+   cd src
+   python main.py
+   ```
+
 
 ## Documentation 
 
-The project is extensively documented. All classes and helper-function used in this project in the folder `scripts/` come with a docstring. The entire documentation is hosted online through [*sphinx*](https://www.sphinx-doc.org/en/master/) and is visitable [here](https://ml-project-itu.readthedocs.io/en/latest/index.html)
+The project is extensively documented. All classes and helper-function used in this project in the folder `scripts/` come with a docstring. The entire documentation is hosted online through [*sphinx*](https://www.sphinx-doc.org/en/master/) and is visitable [here](https://ml-project.readthedocs.io/en/latest/index.html)
 
 ## Contributers
 
