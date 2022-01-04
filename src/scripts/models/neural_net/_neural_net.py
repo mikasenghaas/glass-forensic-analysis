@@ -86,7 +86,7 @@ class NeuralNetworkClassifier(BaseClassifier):
         Parameters
         ----------
         X : 2d array
-            n x n_in sample to forward through the network, n_in must 
+            n x n_in a sample to forward through the network, n_in must 
             correspond to the first :class:`DenseLayer`
 
         Notes
@@ -96,8 +96,9 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         Returns
         -------
-        n x n_out array where n is the number of data points and n_out 
-        corresponds to the number of neurons in the last :class:`DenseLayer`
+        2d array
+            n x n_out array where n is the number of data points and n_out 
+            corresponds to the number of neurons in the last :class:`DenseLayer`
         """
         for layer in self.layers:
             X = layer.forward(X)
@@ -116,7 +117,6 @@ class NeuralNetworkClassifier(BaseClassifier):
         y : 1d array
             n x 1 vector of target classes, where n is the number of data points
 
-
         num_batches : int, optional
             Number of batches used to train the network in every epoch.
             The parameters are being updated after every forward pass of a batch.
@@ -124,13 +124,13 @@ class NeuralNetworkClassifier(BaseClassifier):
             in every epoch
         
         epochs : int, optional
-            Number of training loops (default is 1000) 
+            Number of training loops 
 
         lr : float, optional
             learning rate for the gradient descent step
 
         verbose : int, optional
-            Prints out during the training (0, 1 or 2)
+            Print outs during the training (possible values: 0, 1 or 2)
 
         Attributes
         ----------
@@ -236,11 +236,12 @@ class NeuralNetworkClassifier(BaseClassifier):
         Parameters
         ----------
         X : 2d array
+            a sample for which we wish to make predictions
         
         Returns
         -------
-        1d array of predicted labels of size n, where n is the number of 
-        data points 
+        1d array
+            predicted labels of size n, where n is the size of the sample X 
 
         """
         probs = self.predict_proba(X)
@@ -253,6 +254,7 @@ class NeuralNetworkClassifier(BaseClassifier):
         Parameters
         ----------
         X : 2d array
+            a sample for which we wish to make predictions
 
         Notes
         -----
@@ -261,8 +263,8 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         Returns
         -------
-        2d array of probabilities of size n x k, where n is the number of 
-        data points and k the number of classes
+        2d array
+            probabilities of size n x k, where n is the size of the sample X and k the number of classes
         """
         X = convert_to_var(X)
 
@@ -273,7 +275,8 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         Returns
         -------
-        1d array of length n, where n is the number of parameters
+        1d array
+            n x 1 array, where n is the number of parameters
         """
         return np.hstack([layer.parameters() for layer in self.layers])
 
@@ -282,7 +285,8 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         Returns
         -------
-        int, the number of parameters the Neural Network has
+        int 
+            the number of parameters the Neural Network has
         """
         return len(self.parameters)
 
@@ -291,8 +295,8 @@ class NeuralNetworkClassifier(BaseClassifier):
 
         Returns
         -------
-        str, summary of the network (name,weights,biases,layers,number of 
-        parameters)
+        str
+            summary of the network (name,weights,biases,layers,number of parameters)
         """
         s = f"Name: {self.name}\n\n" 
         header = 'Layer\t\tWeight Dim\tBias Dim\tTotal Parameters\n'

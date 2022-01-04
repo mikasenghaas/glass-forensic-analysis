@@ -6,8 +6,6 @@ from ._helper import convert_to_var, softmax
 class DenseLayer:
     """DenseLayer data structure that works as a building block for the Neural Network class.
 
-    This class serves as a core building block to implement a Neural Network.
-
     Its main functionality is to take an input X and produce an output Y as a linear combination of the weights and the input (passed through a non linear activation function)
 
     Parameters
@@ -55,6 +53,7 @@ class DenseLayer:
         Returns
         -------
         int
+            number of neurons
         """
         return len(self.bias)
     
@@ -63,7 +62,10 @@ class DenseLayer:
 
         Returns
         -------
-        tuple
+        weights : tuple 
+            weights dimensions 
+        biases : tuple 
+            bias dimensions 
         """
         return self.weights.shape, self.bias.shape
 
@@ -86,6 +88,7 @@ class DenseLayer:
         Returns
         -------
         int
+            number of parameters in the layer
 
         """
         return len(self.parameters())
@@ -95,17 +98,13 @@ class DenseLayer:
 
         Parameters
         ----------
-        X : 2d array of Var instances
+        X : 2d array
             n x n_in where n is the number of provided samples
-
-        Notes
-        -----
-        Computes the forward pass of the dense layer: For each output neuron, j, 
-        it computes: activation(weights[i][j]*inputs[i] + bias[j])
 
         Returns
         -------
-        n x n_out array of Vars where n is the number of provided samples.
+        2d array
+            n x n_out array of Vars where n is the number of provided samples and n_out is the number of neurons in the layer.
         """
         assert X.shape[1] == self.weights.shape[0], f'Mismatch in second X dimension;'\
                                                     f'tried {X.shape}x{self.weights.shape}'
